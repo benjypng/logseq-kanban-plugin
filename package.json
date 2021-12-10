@@ -1,0 +1,30 @@
+{
+  "name": "logseq-kanban-plugin",
+  "version": "0.1",
+  "description": "",
+  "main": "dist/index.html",
+  "targets": {
+    "main": false
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rm -R dist && rm -R .parcel-cache && parcel build --no-source-maps index.html --public-url ./"
+  },
+  "keywords": [],
+  "author": "hkgnp",
+  "license": "ISC",
+  "dependencies": {
+    "@asseinfo/react-kanban": "^2.2.0",
+    "@logseq/libs": "0.0.1-alpha.30",
+    "@lourenci/react-kanban": "^2.1.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  },
+  "logseq": {
+    "id": "logseq-kanban-plugin",
+    "title": "logseq-kanban-plugin"
+  },
+  "devDependencies": {
+    "parcel": "^2.0.1"
+  }
+}
