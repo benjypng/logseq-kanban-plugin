@@ -1,7 +1,7 @@
 {
   "name": "logseq-kanban-plugin",
   "version": "1.0",
-  "description": "",
+  "description": "Simple plugin to help visualise data on a Kanban Board!",
   "main": "dist/index.html",
   "targets": {
     "main": false
