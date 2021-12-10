@@ -22,7 +22,7 @@
   "logseq": {
     "id": "logseq-kanban-plugin",
     "title": "logseq-kanban-plugin",
-    "icon": "./icon.png"
+    "icon": "./icon.svg"
   },
   "devDependencies": {
     "parcel": "^2.0.1"
