@@ -1,6 +1,6 @@
 {
   "name": "logseq-kanban-plugin",
-  "version": "0.1",
+  "version": "1.0",
   "description": "",
   "main": "dist/index.html",
   "targets": {
@@ -16,13 +16,13 @@
   "dependencies": {
     "@asseinfo/react-kanban": "^2.2.0",
     "@logseq/libs": "0.0.1-alpha.30",
-    "@lourenci/react-kanban": "^2.1.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2"
   },
   "logseq": {
     "id": "logseq-kanban-plugin",
-    "title": "logseq-kanban-plugin"
+    "title": "logseq-kanban-plugin",
+    "icon": "./icon.png"
   },
   "devDependencies": {
     "parcel": "^2.0.1"
