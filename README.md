@@ -1,10 +1,14 @@
 # Overview
 
-As the name suggests, this helper plugin draws kanban boards using the outliner approach.
+As the name suggests, this helper plugin draws kanban boards using the outliner approach. This plugin offers 2 options:
 
-You can swap columns or move cards around by changing your bullets outline.
+1. A more freeform version
 
 ![](/screenshots/demo.gif)
+
+2. Taking the "TODO, DOING, DONE" approach. Just need to ensure that the parent block for your data is labelled `tasks` or `TASKS`.
+
+![](/screenshots/demo2.gif)
 
 # Credits
 

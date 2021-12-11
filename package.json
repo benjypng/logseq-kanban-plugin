@@ -1,6 +1,6 @@
 {
   "name": "logseq-kanban-plugin",
-  "version": "1.1",
+  "version": "1.2",
   "description": "Simple plugin to help visualise data on a Kanban Board!",
   "main": "dist/index.html",
   "targets": {
@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "parcel build --no-source-maps src/index.html --public-url ./"
+    "build": "rm -R dist && parcel build --no-source-maps src/index.html --public-url ./"
   },
   "keywords": [],
   "author": "hkgnp",
