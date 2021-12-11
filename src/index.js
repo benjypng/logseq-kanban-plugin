@@ -6,9 +6,17 @@ import App from './App';
 const main = async () => {
   console.log('Kanban plugin loaded');
 
+  // Generate unique identifier
+  const uniqueIdentifier = () =>
+    Math.random()
+      .toString(36)
+      .replace(/[^a-z]+/g, '');
+
   // Insert renderer upon slash command
   logseq.Editor.registerSlashCommand('kanban', async () => {
-    await logseq.Editor.insertAtEditingCursor(`{{renderer :kanban}}`);
+    await logseq.Editor.insertAtEditingCursor(
+      `{{renderer :kanban_${uniqueIdentifier()}}}`
+    );
   });
 
   logseq.App.onMacroRendererSlotted(async ({ slot, payload }) => {
@@ -20,10 +28,12 @@ const main = async () => {
     // Get uuid of payload so that child blocks can be retrieved for the board
     const uuid = payload.uuid;
     const [type] = payload.arguments;
+    const id = type.split('_')[1]?.trim();
+    const kanbanId = `kanban_${id}`;
 
     // Set div for renderer to use
     const drawKanbanBoard = (board) => {
-      return `<div>${board}</div>`;
+      return `<div id="${kanbanId}" data-slot-id="${slot}" data-kanban-id="${kanbanId}">${board}</div>`;
     };
 
     // Get children data to draw kanban board
@@ -39,7 +49,7 @@ const main = async () => {
 
     if (!type.startsWith(':kanban')) return;
     logseq.provideUI({
-      key: 'logseq-kanban-plugin',
+      key: `${kanbanId}`,
       slot,
       reset: true,
       template: drawKanbanBoard(board),
