@@ -28,7 +28,7 @@ const main = async () => {
 
     // Get children data to draw kanban board
     const block = await logseq.Editor.getBlock(uuid, { includeChildren: true });
-    const dataBlock = block.children;
+    const dataBlock = block.children[0].children;
 
     // Use React to render board
     let board = ReactDOMServer.renderToStaticMarkup(
