@@ -7,7 +7,6 @@ const App = (props) => {
     const { dataBlock, parentBlock } = props;
 
     if (parentBlock.content.toLowerCase() === 'tasks') {
-      console.log;
       // Filter todo
       const todoObj = dataBlock
         .filter((t) => t.content.startsWith('TODO'))
@@ -48,7 +47,6 @@ const App = (props) => {
       const doneColumn = { id: 'doneCol', title: 'DONE', cards: doneObj };
 
       const board = { columns: [todoColumn, doingColumn, doneColumn] };
-      console.log(board);
       return board;
     } else {
       // Map array based on required fields for kanban
@@ -67,7 +65,6 @@ const App = (props) => {
       }
 
       const board = { columns: arr };
-      console.log(board);
       return board;
     }
   };
