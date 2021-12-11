@@ -4,7 +4,7 @@ import ReactDOMServer from 'react-dom/server';
 import App from './App';
 
 const main = async () => {
-  console.log('Kanban test loaded');
+  console.log('Kanban plugin loaded');
 
   // Insert renderer upon slash command
   logseq.Editor.registerSlashCommand('kanban', async () => {
