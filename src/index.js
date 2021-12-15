@@ -21,7 +21,6 @@ const main = async () => {
   });
 
   logseq.App.onMacroRendererSlotted(async ({ slot, payload }) => {
-    console.log(logseq.settings);
     // Provide style for kanban board
     logseq.provideStyle(`${kanbanCss()}`);
 
