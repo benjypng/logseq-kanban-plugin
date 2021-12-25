@@ -14,8 +14,8 @@ const App = (props) => {
           id: t.id,
           description:
             (t.content.includes(':LOGBOOK:') &&
-              t.content.substring(5, t.content.indexOf(':LOGBOOK:'))) ||
-            t.content.substring(5),
+              t.content.substring(7, t.content.indexOf(':LOGBOOK:'))) ||
+            t.content.substring(7),
         }));
 
       const todoColumn = {
@@ -31,8 +31,8 @@ const App = (props) => {
           id: t.id,
           description:
             (t.content.includes(':LOGBOOK:') &&
-              t.content.substring(6, t.content.indexOf(':LOGBOOK:'))) ||
-            t.content.substring(6),
+              t.content.substring(8, t.content.indexOf(':LOGBOOK:'))) ||
+            t.content.substring(8),
         }));
 
       const doingColumn = {
@@ -48,8 +48,8 @@ const App = (props) => {
           id: t.id,
           description:
             (t.content.includes(':LOGBOOK:') &&
-              t.content.substring(5, t.content.indexOf(':LOGBOOK:'))) ||
-            t.content.substring(5),
+              t.content.substring(8, t.content.indexOf(':LOGBOOK:'))) ||
+            t.content.substring(8),
         }));
 
       const doneColumn = {
