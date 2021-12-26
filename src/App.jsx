@@ -6,61 +6,7 @@ const App = (props) => {
     // Data from child block comes here
     const { dataBlock, parentBlock } = props;
 
-    if (parentBlock.content.toLowerCase() === 'projects') {
-      // Filter todo
-      const todoObj = dataBlock
-        .filter((t) => t.content.startsWith('backlog'))
-        .map((t) => ({
-          id: t.id,
-          description:
-            (t.content.includes(':LOGBOOK:') &&
-              t.content.substring(7, t.content.indexOf(':LOGBOOK:'))) ||
-            t.content.substring(7),
-        }));
-
-      const todoColumn = {
-        id: 'notDoneCol',
-        title: 'Backlog',
-        cards: todoObj,
-      };
-
-      // Filter doing
-      const doingObj = dataBlock
-        .filter((t) => t.content.startsWith('progress'))
-        .map((t) => ({
-          id: t.id,
-          description:
-            (t.content.includes(':LOGBOOK:') &&
-              t.content.substring(8, t.content.indexOf(':LOGBOOK:'))) ||
-            t.content.substring(8),
-        }));
-
-      const doingColumn = {
-        id: 'inProgressCol',
-        title: 'In Progress',
-        cards: doingObj,
-      };
-
-      // Filter done
-      const doneObj = dataBlock
-        .filter((t) => t.content.startsWith('completed'))
-        .map((t) => ({
-          id: t.id,
-          description:
-            (t.content.includes(':LOGBOOK:') &&
-              t.content.substring(8, t.content.indexOf(':LOGBOOK:'))) ||
-            t.content.substring(8),
-        }));
-
-      const doneColumn = {
-        id: 'completedCol',
-        title: 'Completed',
-        cards: doneObj,
-      };
-
-      const board = { columns: [todoColumn, doingColumn, doneColumn] };
-      return board;
-    } else if (parentBlock.content.toLowerCase() === 'tasks') {
+    if (parentBlock.content.toLowerCase() === 'tasks') {
       // Filter todo
       const todoObj = dataBlock
         .filter((t) => t.content.startsWith('TODO'))
