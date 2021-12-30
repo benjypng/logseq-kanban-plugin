@@ -14,6 +14,12 @@ As the name suggests, this helper plugin draws kanban boards using the outliner 
 
 ![](/screenshots/demo2.gif)
 
+# Adding Images
+
+> 2021/12/31: This is not tested on Windows yet
+
+![](/screenshots/img-demo.gif)
+
 # Credits
 
 [react-kanban by asseinfo](https://github.com/asseinfo/react-kanban)
