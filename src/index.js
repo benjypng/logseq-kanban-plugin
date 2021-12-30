@@ -7,6 +7,12 @@ import kanbanCss from './kanban.js';
 const main = async () => {
   console.log('Kanban plugin loaded');
 
+  // Set path in settings for adding images to kanban board
+  const currGraph = await logseq.App.getCurrentGraph();
+  logseq.updateSettings({
+    pathToLogseq: `${currGraph.path}/assets`,
+  });
+
   // Generate unique identifier
   const uniqueIdentifier = () =>
     Math.random()

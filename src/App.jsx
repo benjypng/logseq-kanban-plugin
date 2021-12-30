@@ -60,7 +60,35 @@ const App = (props) => {
       // Populate kanbon cards under their respective headers
       for (let i of arr) {
         for (let j of i.children) {
-          i.cards.push({ id: j.id, description: j.content });
+          console.log();
+          let payload = {};
+          if (
+            j.content.startsWith('![') &&
+            j.content.includes('](') &&
+            j.content.endsWith(')')
+          ) {
+            payload = {
+              id: j.id,
+              description: (
+                <React.Fragment>
+                  <img
+                    src={`assets://${
+                      logseq.settings.pathToLogseq
+                    }/${j.content.substring(
+                      j.content.indexOf('/assets/') + 8,
+                      j.content.length - 1
+                    )}`}
+                  />
+                </React.Fragment>
+              ),
+            };
+          } else {
+            payload = {
+              id: j.id,
+              description: j.content,
+            };
+          }
+          i.cards.push(payload);
         }
       }
 
