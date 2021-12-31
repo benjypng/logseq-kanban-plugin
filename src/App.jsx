@@ -52,7 +52,9 @@ const App = (props) => {
       // Map array based on required fields for kanban
       const arr = dataBlock.map((e) => ({
         id: e.id,
-        title: e.content,
+        title: e.content.includes('collapsed:: true')
+          ? e.content.substring(0, e.content.indexOf('collapsed:: true'))
+          : e.content,
         cards: [],
         children: e.children,
       }));
@@ -85,7 +87,9 @@ const App = (props) => {
           } else {
             payload = {
               id: j.id,
-              description: j.content,
+              description: j.content.includes('collapsed:: true')
+                ? j.content.substring(0, j.content.indexOf('collapsed:: true'))
+                : j.content,
             };
           }
           i.cards.push(payload);
