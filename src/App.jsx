@@ -7,15 +7,28 @@ const App = (props) => {
     const { dataBlock, parentBlock } = props;
 
     if (parentBlock.content.toLowerCase() === 'tasks') {
+      const returnPayload = (content, char) => {
+        if (
+          content.includes(':LOGBOOK:') &&
+          content.includes('collapsed:: true')
+        ) {
+          const x = content.substring(char, t.content.indexOf(':LOGBOOK:'));
+
+          return x.substring(char, t.content.indexOf('collapsed:: true'));
+        } else if (content.includes(':LOGBOOK:')) {
+          return content.substring(char, t.content.indexOf(':LOGBOOK:'));
+        } else if (content.includes('collapsed:: true')) {
+          return content.substring(char, e.content.indexOf('collapsed:: true'));
+        } else {
+          return content.substring(char);
+        }
+      };
       // Filter todo
       const todoObj = dataBlock
         .filter((t) => t.content.startsWith('TODO'))
         .map((t) => ({
           id: t.id,
-          description:
-            (t.content.includes(':LOGBOOK:') &&
-              t.content.substring(5, t.content.indexOf(':LOGBOOK:'))) ||
-            t.content.substring(5),
+          description: returnPayload(t.content, 5),
         }));
 
       const todoColumn = { id: 'todoCol', title: 'TODO', cards: todoObj };
@@ -25,10 +38,7 @@ const App = (props) => {
         .filter((t) => t.content.startsWith('DOING'))
         .map((t) => ({
           id: t.id,
-          description:
-            (t.content.includes(':LOGBOOK:') &&
-              t.content.substring(6, t.content.indexOf(':LOGBOOK:'))) ||
-            t.content.substring(6),
+          description: returnPayload(t.content, 6),
         }));
 
       const doingColumn = { id: 'doingCol', title: 'DOING', cards: doingObj };
@@ -38,10 +48,7 @@ const App = (props) => {
         .filter((t) => t.content.startsWith('DONE'))
         .map((t) => ({
           id: t.id,
-          description:
-            (t.content.includes(':LOGBOOK:') &&
-              t.content.substring(5, t.content.indexOf(':LOGBOOK:'))) ||
-            t.content.substring(5),
+          description: returnPayload(t.content, 5),
         }));
 
       const doneColumn = { id: 'doneCol', title: 'DONE', cards: doneObj };
