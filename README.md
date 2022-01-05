@@ -16,9 +16,13 @@ As the name suggests, this helper plugin draws kanban boards using the outliner 
 
 # Adding Images
 
-> 2021/12/31: This is not tested on Windows yet
-
 ![](/screenshots/img-demo.gif)
+
+# Adjustable Width of Cards
+
+If you need to adjust the width of the card, just include a number (in pixels) after your kanban type. See below for instructions.
+
+![](/screenshots/widthdemo.gif)
 
 # Credits
 

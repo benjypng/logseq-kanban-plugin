@@ -27,9 +27,6 @@ const main = async () => {
   });
 
   logseq.App.onMacroRendererSlotted(async ({ slot, payload }) => {
-    // Provide style for kanban board
-    logseq.provideStyle(`${kanbanCss()}`);
-
     // Get uuid of payload so that child blocks can be retrieved for the board
     const uuid = payload.uuid;
     const [type] = payload.arguments;
@@ -43,6 +40,16 @@ const main = async () => {
 
     // Get children data to draw kanban board
     const block = await logseq.Editor.getBlock(uuid, { includeChildren: true });
+
+    let [data, width] = block.children[0].content.split(' ');
+
+    if (width === undefined) {
+      // Provide style for kanban board
+      logseq.provideStyle(`${kanbanCss(250)}`);
+    } else {
+      width = parseInt(width);
+      logseq.provideStyle(`${kanbanCss(width)}`);
+    }
 
     // Use React to render board
     let board = ReactDOMServer.renderToStaticMarkup(

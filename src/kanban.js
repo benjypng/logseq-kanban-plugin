@@ -1,4 +1,4 @@
-const kanbanCss = () => {
+const kanbanCss = (width) => {
   return `
   .react-kanban-board {
     padding: 2px;
@@ -10,14 +10,14 @@ const kanbanCss = () => {
     border-radius: 3px;
     background-color: #fff;
     padding: 10px;
-    margin-bottom: 7px
+    margin-bottom: 7px;
+    width: ${width}px;
   }
   
   .react-kanban-card,
   .react-kanban-card-skeleton {
     box-sizing: border-box;
-    max-width: 250px;
-    min-width: 250px
+    min-width: 250px;
   }
   
   .react-kanban-card:hover {
@@ -36,12 +36,12 @@ const kanbanCss = () => {
   
   .react-kanban-column {
     white-space: normal;
-    max-width: 290px;
     min-width: 290px;
     padding: 15px;
     border-radius: 2px;
     background-color: #eee;
-    margin: 5px
+    margin: 5px;
+    width: ${width + 40}px;
   }
   
   .react-kanban-column input:focus {
