@@ -4,6 +4,20 @@ import ReactDOMServer from 'react-dom/server';
 import App from './App';
 import kanbanCss from './kanban.js';
 
+// Maps task workflows to the strings their tasks begin with.
+const taskWorkflows = {
+  now: {
+    TODO: 'LATER',
+    DOING: 'NOW',
+    DONE: 'DONE',
+  },
+  todo: {
+    TODO: 'TODO',
+    DOING: 'DOING',
+    DONE: 'DONE',
+  },
+}
+
 const main = async () => {
   console.log('Kanban plugin loaded');
 
@@ -56,7 +70,11 @@ const main = async () => {
     // Start creating board
     let board = {};
 
+
     if (parent.toLowerCase() === 'tasks') {
+      const userConfig = await logseq.App.getUserConfigs();
+      const workflow = taskWorkflows[userConfig.preferredWorkflow];
+
       const returnPayload = (content, char) => {
         if (
           content.includes(':LOGBOOK:') &&
@@ -75,33 +93,33 @@ const main = async () => {
       };
       // Filter todo
       const todoObj = dataBlock
-        .filter((t) => t.content.startsWith('TODO'))
+        .filter((t) => t.content.startsWith(workflow.TODO))
         .map((t) => ({
           id: t.id,
-          description: returnPayload(t.content, 5),
+          description: returnPayload(t.content, workflow.TODO.length+1),
         }));
 
-      const todoColumn = { id: 'todoCol', title: 'TODO', cards: todoObj };
+      const todoColumn = { id: 'todoCol', title: workflow.TODO, cards: todoObj };
 
       // Filter doing
       const doingObj = dataBlock
-        .filter((t) => t.content.startsWith('DOING'))
+        .filter((t) => t.content.startsWith(workflow.DOING))
         .map((t) => ({
           id: t.id,
-          description: returnPayload(t.content, 6),
+          description: returnPayload(t.content, workflow.DOING.length+1),
         }));
 
-      const doingColumn = { id: 'doingCol', title: 'DOING', cards: doingObj };
+      const doingColumn = { id: 'doingCol', title: workflow.DOING, cards: doingObj };
 
       // Filter done
       const doneObj = dataBlock
-        .filter((t) => t.content.startsWith('DONE'))
+        .filter((t) => t.content.startsWith(workflow.DONE))
         .map((t) => ({
           id: t.id,
-          description: returnPayload(t.content, 5),
+          description: returnPayload(t.content, workflow.DONE.length+1),
         }));
 
-      const doneColumn = { id: 'doneCol', title: 'DONE', cards: doneObj };
+      const doneColumn = { id: 'doneCol', title: workflow.DONE, cards: doneObj };
 
       board = { columns: [todoColumn, doingColumn, doneColumn] };
     } else {
