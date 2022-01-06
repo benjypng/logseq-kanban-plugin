@@ -158,7 +158,6 @@ const main = async () => {
               id: j.id,
               description: blockContent,
             };
-            console.log(payload);
           } else {
             payload = {
               id: j.id,
