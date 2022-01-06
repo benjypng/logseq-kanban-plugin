@@ -62,11 +62,11 @@ const main = async () => {
           content.includes(':LOGBOOK:') &&
           content.includes('collapsed:: true')
         ) {
-          const x = content.substring(char, t.content.indexOf(':LOGBOOK:'));
+          const x = content.substring(char, content.indexOf(':LOGBOOK:'));
 
-          return x.substring(char, t.content.indexOf('collapsed:: true'));
+          return x.substring(char, content.indexOf('collapsed:: true'));
         } else if (content.includes(':LOGBOOK:')) {
-          return content.substring(char, t.content.indexOf(':LOGBOOK:'));
+          return content.substring(char, content.indexOf(':LOGBOOK:'));
         } else if (content.includes('collapsed:: true')) {
           return content.substring(char, e.content.indexOf('collapsed:: true'));
         } else {
