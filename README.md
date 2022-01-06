@@ -14,6 +14,10 @@ As the name suggests, this helper plugin draws kanban boards using the outliner 
 
 ![](/screenshots/demo2.gif)
 
+# Adding block references
+
+![](/screenshots/blockref-demo.gif)
+
 # Adding Images
 
 ![](/screenshots/img-demo.gif)

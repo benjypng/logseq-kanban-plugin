@@ -40,9 +40,11 @@ const main = async () => {
 
     // Get children data to draw kanban board
     const block = await logseq.Editor.getBlock(uuid, { includeChildren: true });
+    // Data from child block comes here
+    const dataBlock = block.children[0].children;
 
-    let [data, width] = block.children[0].content.split(' ');
-
+    // Get width data from the block to allow flexible widths
+    let [parent, width] = block.children[0].content.split(' ');
     if (width === undefined) {
       // Provide style for kanban board
       logseq.provideStyle(`${kanbanCss(250)}`);
@@ -51,20 +53,136 @@ const main = async () => {
       logseq.provideStyle(`${kanbanCss(width)}`);
     }
 
+    // Start creating board
+    let board = {};
+
+    if (parent.toLowerCase() === 'tasks') {
+      const returnPayload = (content, char) => {
+        if (
+          content.includes(':LOGBOOK:') &&
+          content.includes('collapsed:: true')
+        ) {
+          const x = content.substring(char, t.content.indexOf(':LOGBOOK:'));
+
+          return x.substring(char, t.content.indexOf('collapsed:: true'));
+        } else if (content.includes(':LOGBOOK:')) {
+          return content.substring(char, t.content.indexOf(':LOGBOOK:'));
+        } else if (content.includes('collapsed:: true')) {
+          return content.substring(char, e.content.indexOf('collapsed:: true'));
+        } else {
+          return content.substring(char);
+        }
+      };
+      // Filter todo
+      const todoObj = dataBlock
+        .filter((t) => t.content.startsWith('TODO'))
+        .map((t) => ({
+          id: t.id,
+          description: returnPayload(t.content, 5),
+        }));
+
+      const todoColumn = { id: 'todoCol', title: 'TODO', cards: todoObj };
+
+      // Filter doing
+      const doingObj = dataBlock
+        .filter((t) => t.content.startsWith('DOING'))
+        .map((t) => ({
+          id: t.id,
+          description: returnPayload(t.content, 6),
+        }));
+
+      const doingColumn = { id: 'doingCol', title: 'DOING', cards: doingObj };
+
+      // Filter done
+      const doneObj = dataBlock
+        .filter((t) => t.content.startsWith('DONE'))
+        .map((t) => ({
+          id: t.id,
+          description: returnPayload(t.content, 5),
+        }));
+
+      const doneColumn = { id: 'doneCol', title: 'DONE', cards: doneObj };
+
+      board = { columns: [todoColumn, doingColumn, doneColumn] };
+    } else {
+      // Map array based on required fields for kanban
+      const arr = dataBlock.map((e) => ({
+        id: e.id,
+        title: e.content.includes('collapsed:: true')
+          ? e.content.substring(0, e.content.indexOf('collapsed:: true'))
+          : e.content,
+        cards: [],
+        children: e.children,
+      }));
+
+      // Populate kanbon cards under their respective headers
+      for (let i of arr) {
+        for (let j of i.children) {
+          console.log();
+          let payload = {};
+          if (
+            j.content.startsWith('![') &&
+            j.content.includes('](') &&
+            j.content.endsWith(')')
+          ) {
+            payload = {
+              id: j.id,
+              description: (
+                <React.Fragment>
+                  <img
+                    src={`assets://${
+                      logseq.settings.pathToLogseq
+                    }/${j.content.substring(
+                      j.content.indexOf('/assets/') + 8,
+                      j.content.length - 1
+                    )}`}
+                  />
+                </React.Fragment>
+              ),
+            };
+          } else if (j.content.includes('((') && j.content.includes('))')) {
+            let blockContent = j.content;
+            // Get content if it's q block reference
+            const rxGetId = /\(([^(())]+)\)/;
+            const blockId = rxGetId.exec(blockContent);
+            const block = await logseq.Editor.getBlock(blockId[1], {
+              includeChildren: true,
+            });
+
+            blockContent = blockContent.replace(
+              `((${blockId[1]}))`,
+              block.content.substring(0, block.content.indexOf('id::'))
+            );
+
+            payload = {
+              id: j.id,
+              description: blockContent,
+            };
+            console.log(payload);
+          } else {
+            payload = {
+              id: j.id,
+              description: j.content.includes('collapsed:: true')
+                ? j.content.substring(0, j.content.indexOf('collapsed:: true'))
+                : j.content,
+            };
+          }
+          i.cards.push(payload);
+        }
+      }
+
+      board = { columns: arr };
+    }
+
     // Use React to render board
-    let board = ReactDOMServer.renderToStaticMarkup(
-      <App
-        dataBlock={block.children[0].children}
-        parentBlock={block.children[0]}
-      />
-    );
+    let kanban = ReactDOMServer.renderToStaticMarkup(<App boardData={board} />);
 
     if (!type.startsWith(':kanban')) return;
     logseq.provideUI({
       key: `${kanbanId}`,
       slot,
       reset: true,
-      template: drawKanbanBoard(board),
+      template: drawKanbanBoard(kanban),
     });
   });
 };
