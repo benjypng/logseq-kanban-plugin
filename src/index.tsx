@@ -10,10 +10,18 @@ type Task = {
   description: string;
 };
 
+type Kanban = {
+  id: number;
+  title: string;
+  cards: any[];
+  children: any[];
+  content: string;
+};
+
 const main = async () => {
   console.log('Kanban plugin loaded');
-  const x = await logseq.App.getUserConfigs();
-  console.log(x);
+  const userConfigs = await logseq.App.getUserConfigs();
+  const { preferredWorkflow } = userConfigs;
 
   // Set path in settings for adding images to kanban board
   const currGraph = await logseq.App.getCurrentGraph();
@@ -83,23 +91,41 @@ const main = async () => {
       };
       // Filter todo
       const todoObj = dataBlock
-        .filter((t: Task) => t.content.startsWith('TODO'))
+        .filter((t: Task) =>
+          t.content.startsWith(preferredWorkflow === 'todo' ? 'TODO' : 'LATER')
+        )
         .map((t: Task) => ({
           id: t.id,
-          description: returnPayload(t.content, 5),
+          description: returnPayload(
+            t.content,
+            preferredWorkflow === 'todo' ? 5 : 6
+          ),
         }));
 
-      const todoColumn = { id: 'todoCol', title: 'TODO', cards: todoObj };
+      const todoColumn = {
+        id: 'todoCol',
+        title: preferredWorkflow === 'todo' ? 'TODO' : 'LATER',
+        cards: todoObj,
+      };
 
       // Filter doing
       const doingObj = dataBlock
-        .filter((t: Task) => t.content.startsWith('DOING'))
+        .filter((t: Task) =>
+          t.content.startsWith(preferredWorkflow === 'todo' ? 'DOING' : 'NOW')
+        )
         .map((t: Task) => ({
           id: t.id,
-          description: returnPayload(t.content, 6),
+          description: returnPayload(
+            t.content,
+            preferredWorkflow === 'todo' ? 6 : 4
+          ),
         }));
 
-      const doingColumn = { id: 'doingCol', title: 'DOING', cards: doingObj };
+      const doingColumn = {
+        id: 'doingCol',
+        title: preferredWorkflow === 'todo' ? 'DOING' : 'NOW',
+        cards: doingObj,
+      };
 
       // Filter done
       const doneObj = dataBlock
@@ -114,7 +140,7 @@ const main = async () => {
       board = { columns: [todoColumn, doingColumn, doneColumn] };
     } else {
       // Map array based on required fields for kanban
-      const arr = dataBlock.map((e) => ({
+      const arr = dataBlock.map((e: Kanban) => ({
         id: e.id,
         title: e.content.includes('collapsed:: true')
           ? e.content.substring(0, e.content.indexOf('collapsed:: true'))
@@ -126,7 +152,6 @@ const main = async () => {
       // Populate kanbon cards under their respective headers
       for (let i of arr) {
         for (let j of i.children) {
-          console.log();
           let payload = {};
           if (
             j.content.startsWith('![') &&
