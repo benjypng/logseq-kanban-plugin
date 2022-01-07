@@ -4,8 +4,16 @@ import ReactDOMServer from 'react-dom/server';
 import App from './App';
 import kanbanCss from './kanban.js';
 
+type Task = {
+  content: string;
+  id: string;
+  description: string;
+};
+
 const main = async () => {
   console.log('Kanban plugin loaded');
+  const x = await logseq.App.getUserConfigs();
+  console.log(x);
 
   // Set path in settings for adding images to kanban board
   const currGraph = await logseq.App.getCurrentGraph();
@@ -41,10 +49,10 @@ const main = async () => {
     // Get children data to draw kanban board
     const block = await logseq.Editor.getBlock(uuid, { includeChildren: true });
     // Data from child block comes here
-    const dataBlock = block.children[0].children;
+    const dataBlock = block.children[0]['children'];
 
     // Get width data from the block to allow flexible widths
-    let [parent, width] = block.children[0].content.split(' ');
+    let [parent, width] = block.children[0]['content'].split(' ');
     if (width === undefined) {
       // Provide style for kanban board
       logseq.provideStyle(`${kanbanCss(250)}`);
@@ -57,26 +65,26 @@ const main = async () => {
     let board = {};
 
     if (parent.toLowerCase() === 'tasks') {
-      const returnPayload = (content, char) => {
+      const returnPayload = (content: string, char: number) => {
         if (
           content.includes(':LOGBOOK:') &&
           content.includes('collapsed:: true')
         ) {
-          const x = content.substring(char, t.content.indexOf(':LOGBOOK:'));
-
-          return x.substring(char, t.content.indexOf('collapsed:: true'));
+          return content
+            .substring(char, content.indexOf(':LOGBOOK:'))
+            .substring(char, content.indexOf('collapsed:: true'));
         } else if (content.includes(':LOGBOOK:')) {
-          return content.substring(char, t.content.indexOf(':LOGBOOK:'));
+          return content.substring(char, content.indexOf(':LOGBOOK:'));
         } else if (content.includes('collapsed:: true')) {
-          return content.substring(char, e.content.indexOf('collapsed:: true'));
+          return content.substring(char, content.indexOf('collapsed:: true'));
         } else {
           return content.substring(char);
         }
       };
       // Filter todo
       const todoObj = dataBlock
-        .filter((t) => t.content.startsWith('TODO'))
-        .map((t) => ({
+        .filter((t: Task) => t.content.startsWith('TODO'))
+        .map((t: Task) => ({
           id: t.id,
           description: returnPayload(t.content, 5),
         }));
@@ -85,8 +93,8 @@ const main = async () => {
 
       // Filter doing
       const doingObj = dataBlock
-        .filter((t) => t.content.startsWith('DOING'))
-        .map((t) => ({
+        .filter((t: Task) => t.content.startsWith('DOING'))
+        .map((t: Task) => ({
           id: t.id,
           description: returnPayload(t.content, 6),
         }));
@@ -95,8 +103,8 @@ const main = async () => {
 
       // Filter done
       const doneObj = dataBlock
-        .filter((t) => t.content.startsWith('DONE'))
-        .map((t) => ({
+        .filter((t: Task) => t.content.startsWith('DONE'))
+        .map((t: Task) => ({
           id: t.id,
           description: returnPayload(t.content, 5),
         }));
