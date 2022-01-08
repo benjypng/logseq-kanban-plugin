@@ -20,8 +20,6 @@ type Kanban = {
 
 const main = async () => {
   console.log('Kanban plugin loaded');
-  const userConfigs = await logseq.App.getUserConfigs();
-  const { preferredWorkflow } = userConfigs;
 
   // Set path in settings for adding images to kanban board
   const currGraph = await logseq.App.getCurrentGraph();
@@ -71,6 +69,10 @@ const main = async () => {
 
     // Start creating board
     let board = {};
+
+    // Get user preferred workflows
+    const userConfigs = await logseq.App.getUserConfigs();
+    const { preferredWorkflow } = userConfigs;
 
     if (parent.toLowerCase() === 'tasks') {
       const returnPayload = (content: string, char: number) => {

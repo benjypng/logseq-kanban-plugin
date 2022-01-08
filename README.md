@@ -12,7 +12,7 @@ As the name suggests, this helper plugin draws kanban boards using the outliner 
 
 2. Taking the "TODO, DOING, DONE" or "LATER, NOW, DONE" approach. Just need to ensure that the parent block for your data is labelled `tasks` or `TASKS`. This approach supports only having the above 3 columns.
 
-![](/screenshots/demo2.gif)
+![](/screenshots/demo3.gif)
 
 # Adding block references
 
