@@ -47,6 +47,8 @@ const main = async () => {
     const id = type.split('_')[1]?.trim();
     const kanbanId = `kanban_${id}`;
 
+    if (!type.startsWith(':kanban')) return;
+
     // Set div for renderer to use
     const drawKanbanBoard = (board) => {
       return `<div id="${kanbanId}" data-slot-id="${slot}" data-kanban-id="${kanbanId}">${board}</div>`;
@@ -211,7 +213,6 @@ const main = async () => {
     // Use React to render board
     let kanban = ReactDOMServer.renderToStaticMarkup(<App boardData={board} />);
 
-    if (!type.startsWith(':kanban')) return;
     logseq.provideUI({
       key: `${kanbanId}`,
       slot,
