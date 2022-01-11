@@ -47,7 +47,7 @@ const main = async () => {
     const id = type.split('_')[1]?.trim();
     const kanbanId = `kanban_${id}`;
 
-    if (!type.startsWith(':kanban')) return;
+    if (!type.startsWith(':kanban_')) return;
 
     // Set div for renderer to use
     const drawKanbanBoard = (board) => {
@@ -76,23 +76,17 @@ const main = async () => {
     const userConfigs = await logseq.App.getUserConfigs();
     const { preferredWorkflow } = userConfigs;
 
+    const returnPayload = (content: string) => {
+      const payload = content.replace(/:LOGBOOK:|collapsed:: true/gi, '');
+
+      if (content.indexOf(`\nid:: `) === -1) {
+        return payload;
+      } else {
+        return payload.substring(0, content.indexOf(`\nid:: `));
+      }
+    };
+
     if (parent.toLowerCase() === 'tasks') {
-      const returnPayload = (content: string, char: number) => {
-        if (
-          content.includes(':LOGBOOK:') &&
-          content.includes('collapsed:: true')
-        ) {
-          return content
-            .substring(char, content.indexOf(':LOGBOOK:'))
-            .substring(char, content.indexOf('collapsed:: true'));
-        } else if (content.includes(':LOGBOOK:')) {
-          return content.substring(char, content.indexOf(':LOGBOOK:'));
-        } else if (content.includes('collapsed:: true')) {
-          return content.substring(char, content.indexOf('collapsed:: true'));
-        } else {
-          return content.substring(char);
-        }
-      };
       // Filter todo
       const todoObj = dataBlock
         .filter((t: Task) =>
@@ -100,10 +94,7 @@ const main = async () => {
         )
         .map((t: Task) => ({
           id: t.id,
-          description: returnPayload(
-            t.content,
-            preferredWorkflow === 'todo' ? 5 : 6
-          ),
+          description: returnPayload(t.content),
         }));
 
       const todoColumn = {
@@ -119,10 +110,7 @@ const main = async () => {
         )
         .map((t: Task) => ({
           id: t.id,
-          description: returnPayload(
-            t.content,
-            preferredWorkflow === 'todo' ? 6 : 4
-          ),
+          description: returnPayload(t.content),
         }));
 
       const doingColumn = {
@@ -136,7 +124,7 @@ const main = async () => {
         .filter((t: Task) => t.content.startsWith('DONE'))
         .map((t: Task) => ({
           id: t.id,
-          description: returnPayload(t.content, 5),
+          description: returnPayload(t.content),
         }));
 
       const doneColumn = { id: 'doneCol', title: 'DONE', cards: doneObj };
@@ -198,9 +186,7 @@ const main = async () => {
           } else {
             payload = {
               id: j.id,
-              description: j.content.includes('collapsed:: true')
-                ? j.content.substring(0, j.content.indexOf('collapsed:: true'))
-                : j.content,
+              description: returnPayload(j.content),
             };
           }
           i.cards.push(payload);
