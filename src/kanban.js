@@ -1,5 +1,11 @@
-const kanbanCss = (width) => {
+const kanbanCss = (width, wrapperWidth) => {
   return `
+  .wrapper {
+    max-width: ${wrapperWidth}px;
+    overflow-x: scroll;
+    white-space: nowrap;
+  }
+
   .react-kanban-board {
     padding: 2px;
     margin: 0;

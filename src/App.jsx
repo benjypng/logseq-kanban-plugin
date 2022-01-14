@@ -19,7 +19,11 @@ const App = (props) => {
       </div>
     );
   } else {
-    return <Board>{kanbanBoard}</Board>;
+    return (
+      <div className="wrapper">
+        <Board>{kanbanBoard}</Board>
+      </div>
+    );
   }
 };
 

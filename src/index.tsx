@@ -60,13 +60,17 @@ const main = async () => {
     const dataBlock = block.children[0]['children'];
 
     // Get width data from the block to allow flexible widths
-    let [parent, width] = block.children[0]['content'].split(' ');
-    if (width === undefined) {
+    let [parent, width, wrapperWidth] = block.children[0]['content'].split(' ');
+    if (width === undefined && wrapperWidth === undefined) {
       // Provide style for kanban board
-      logseq.provideStyle(`${kanbanCss(250)}`);
+      logseq.provideStyle(`${kanbanCss(250, 1200)}`);
+    } else if (width && wrapperWidth === undefined) {
+      width = parseInt(width);
+      logseq.provideStyle(`${kanbanCss(width, 1000)}`);
     } else {
       width = parseInt(width);
-      logseq.provideStyle(`${kanbanCss(width)}`);
+      wrapperWidth = parseInt(wrapperWidth);
+      logseq.provideStyle(`${kanbanCss(width, wrapperWidth)}`);
     }
 
     // Start creating board
