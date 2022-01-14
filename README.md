@@ -28,6 +28,12 @@ If you need to adjust the width of the card, just include a number (in pixels) a
 
 ![](/screenshots/widthdemo.gif)
 
+# Adjustable Width of Board
+
+If you need to adjust the width of the whole board, just include a number (in pixels) after your width of the card. See video below.
+
+![](/screenshots/boardwidth.gif)
+
 # Credits
 
 [react-kanban by asseinfo](https://github.com/asseinfo/react-kanban)
