@@ -50,7 +50,7 @@ const main = async () => {
     if (!type.startsWith(':kanban_')) return;
 
     // Set div for renderer to use
-    const drawKanbanBoard = (board) => {
+    const drawKanbanBoard = (board: string) => {
       return `<div id="${kanbanId}" data-slot-id="${slot}" data-kanban-id="${kanbanId}">${board}</div>`;
     };
 
@@ -201,7 +201,9 @@ const main = async () => {
     }
 
     // Use React to render board
-    let kanban = ReactDOMServer.renderToStaticMarkup(<App boardData={board} />);
+    const kanban: string = ReactDOMServer.renderToStaticMarkup(
+      <App boardData={board} />
+    );
 
     logseq.provideUI({
       key: `${kanbanId}`,
