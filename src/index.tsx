@@ -98,7 +98,10 @@ const main = async () => {
         )
         .map((t: Task) => ({
           id: t.id,
-          description: returnPayload(t.content),
+          description:
+            preferredWorkflow === 'todo'
+              ? returnPayload(t.content).substring(4)
+              : returnPayload(t.content).substring(5),
         }));
 
       const todoColumn = {
@@ -114,7 +117,10 @@ const main = async () => {
         )
         .map((t: Task) => ({
           id: t.id,
-          description: returnPayload(t.content),
+          description:
+            preferredWorkflow === 'todo'
+              ? returnPayload(t.content).substring(5)
+              : returnPayload(t.content).substring(3),
         }));
 
       const doingColumn = {
@@ -128,7 +134,7 @@ const main = async () => {
         .filter((t: Task) => t.content.startsWith('DONE'))
         .map((t: Task) => ({
           id: t.id,
-          description: returnPayload(t.content),
+          description: returnPayload(t.content).substring(4),
         }));
 
       const doneColumn = { id: 'doneCol', title: 'DONE', cards: doneObj };
@@ -208,6 +214,7 @@ const main = async () => {
     logseq.provideUI({
       key: `${kanbanId}`,
       slot,
+      //@ts-expect-error
       reset: true,
       template: drawKanbanBoard(kanban),
     });
