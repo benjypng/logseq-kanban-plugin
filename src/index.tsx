@@ -80,8 +80,14 @@ const main = async () => {
     const userConfigs = await logseq.App.getUserConfigs();
     const { preferredWorkflow } = userConfigs;
 
+    // DOING Do this and that\n:LOGBOOK:\nCLOCK: [2022-01-24 Mon 12:00:03]--[2022-01-24 Mon 12:00:05] =>  00:00:02\nCLOCK: [2022-01-24 Mon 12:00:06]\n:END:
+
     const returnPayload = (content: string) => {
-      const payload = content.replace(/:LOGBOOK:|collapsed:: true/gi, '');
+      let payload = content.replace(/:LOGBOOK:|collapsed:: true/gi, '');
+
+      if (payload.includes('CLOCK: [')) {
+        payload = payload.substring(0, payload.indexOf('CLOCK: ['));
+      }
 
       if (content.indexOf(`\nid:: `) === -1) {
         return payload;
