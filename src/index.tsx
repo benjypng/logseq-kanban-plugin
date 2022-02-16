@@ -221,7 +221,7 @@ const main = async () => {
           } else if (j.content.includes('((') && j.content.includes('))')) {
             let blockContent = j.content;
             // Get content if it's q block reference
-            const rxGetId = /\(([^(())]+)\)/;
+            const rxGetId = /\(\(([^)]*)\)\)/;
             const blockId = rxGetId.exec(blockContent);
             const block = await logseq.Editor.getBlock(blockId[1], {
               includeChildren: true,
