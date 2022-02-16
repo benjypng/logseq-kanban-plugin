@@ -2,7 +2,7 @@ import '@logseq/libs';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import App from './App';
-import kanbanCss from './kanban.js';
+import kanbanCss from './kanban';
 
 type Task = {
   content: string;
@@ -50,14 +50,14 @@ const main = async () => {
     if (!type.startsWith(':kanban_')) return;
 
     // Set div for renderer to use
-    const drawKanbanBoard = (board: string) => {
+    let drawKanbanBoard = (board: string) => {
       return `<div id="${kanbanId}" data-slot-id="${slot}" data-kanban-id="${kanbanId}">${board}</div>`;
     };
 
     // Get children data to draw kanban board
     const block = await logseq.Editor.getBlock(uuid, { includeChildren: true });
     // Data from child block comes here
-    const dataBlock = block.children[0]['children'];
+    let dataBlock = block.children[0]['children'];
 
     // Get width data from the block to allow flexible widths
     let [parent, width, wrapperWidth] = block.children[0]['content'].split(' ');
@@ -97,6 +97,43 @@ const main = async () => {
     };
 
     if (parent.toLowerCase() === 'tasks') {
+      let dataContent = dataBlock[0].content;
+
+      // Check if query
+      if (
+        dataContent.startsWith('#+BEGIN_QUERY') &&
+        dataContent.endsWith('#+END_QUERY')
+      ) {
+        logseq.provideModel({
+          async render() {
+            const tempBlock = await logseq.Editor.insertBlock(block.uuid, '');
+            await logseq.Editor.removeBlock(tempBlock.uuid);
+          },
+        });
+
+        drawKanbanBoard = (board: string) => {
+          return `<div class="queryWrapper"><div id="${kanbanId}" data-slot-id="${slot}" data-kanban-id="${kanbanId}">${board}</div>
+          <div class="btnDiv"><button data-on-click="render" class="updateKanbanBtn">Update Kanban</button></div></div>`;
+        };
+
+        // Remove unnecessary syntax
+        dataContent = dataContent
+          .replace('#+BEGIN_QUERY', '')
+          .replace('#+END_QUERY', '');
+
+        // Get text after :query
+        dataContent = dataContent.slice(
+          dataContent.indexOf('[:find'),
+          dataContent.indexOf(']]\n') + 2
+        );
+
+        // Pass query through API
+        const datascriptQuery: any[] = await logseq.DB.datascriptQuery(
+          dataContent
+        );
+        dataBlock = datascriptQuery.map((i) => i[0]);
+      }
+
       // Filter todo
       const todoObj = dataBlock
         .filter((t: Task) =>

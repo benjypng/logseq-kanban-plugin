@@ -1,4 +1,4 @@
-[:heart: Sponsor this project on Github](https://github.com/sponsors/hkgnp)
+[[:gift_heart: Sponsor this project on Github](https://github.com/sponsors/hkgnp) or [:coffee: Get me a coffee](https://www.buymeacoffee.com/hkgnp.dev) if you like this plugin!
 
 # Overview
 
@@ -33,6 +33,12 @@ If you need to adjust the width of the card, just include a number (in pixels) a
 If you need to adjust the width of the whole board, just include a number (in pixels) after your width of the card. See video below.
 
 ![](/screenshots/boardwidth.gif)
+
+# Using queries
+
+If you have valid queries that produce **Task items (e.g. TODO, DOING)**, they are now supported in the Kanban as well!
+
+![](/screenshots/queries.gif)
 
 # Credits
 

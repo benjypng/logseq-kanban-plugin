@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Board from '@asseinfo/react-kanban';
 
-const App = (props) => {
+const App = (props: { boardData }) => {
   // Prepare to draw board
   const [kanbanBoard] = useState(props.boardData);
 

@@ -64,6 +64,27 @@ const kanbanCss = (width, wrapperWidth) => {
     transform: translateY(-8px);
     transition: all 0.1s;
   }
+
+  /* Query and query button related */
+  .queryWrapper {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .btnDiv {
+    margin-top: 5px;
+  }
+
+  .updateKanbanBtn {
+    border: 1px solid gray;
+    padding: 0 4px;
+    border-radius: 8px;
+  }
+
+  .updateKanbanBtn:hover {
+    background-color: pink;
+    color: black;
+  }
  `;
 };
 
