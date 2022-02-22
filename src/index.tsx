@@ -3,6 +3,8 @@ import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import App from './App';
 import kanbanCss from './kanban';
+import chrono from 'chrono-node';
+import { getYYYMMDD } from 'logseq-dateutils';
 
 type Task = {
   content: string;
@@ -89,6 +91,9 @@ const main = async () => {
         payload = payload.substring(0, payload.indexOf('CLOCK: ['));
       }
 
+      if (payload.includes('DEADLINE: <')) {
+        payload = payload.substring(0, payload.indexOf('DEADLINE: <'));
+      }
       if (content.indexOf(`\nid:: `) === -1) {
         return payload;
       } else {
@@ -98,6 +103,7 @@ const main = async () => {
 
     if (parent.toLowerCase() === 'tasks') {
       let dataContent = dataBlock[0].content;
+      let inputs: any;
 
       // Check if query
       if (
@@ -121,6 +127,27 @@ const main = async () => {
           .replace('#+BEGIN_QUERY', '')
           .replace('#+END_QUERY', '');
 
+        if (dataContent.includes(':inputs [')) {
+          inputs = dataContent.slice(dataContent.indexOf(':inputs ['));
+          let inputsArr = inputs
+            .substring(0, inputs.indexOf(']'))
+            .replace(':inputs [', '')
+            .replaceAll(':', '')
+            .split(' ');
+
+          inputsArr = inputsArr.map((i) =>
+            i === 'today' || i === 'yesterday'
+              ? getYYYMMDD(chrono.parse(i)[0].start.date())
+              : getYYYMMDD(
+                  chrono
+                    .parse(i.replace('d', 'days').replace('-', ' '))[0]
+                    .start.date()
+                )
+          );
+
+          inputs = inputsArr;
+        }
+
         // Get text after :query
         dataContent = dataContent.slice(
           dataContent.indexOf('[:find'),
@@ -128,9 +155,25 @@ const main = async () => {
         );
 
         // Pass query through API
-        const datascriptQuery: any[] = await logseq.DB.datascriptQuery(
-          dataContent
-        );
+        let datascriptQuery: any[];
+        if (!inputs) {
+          datascriptQuery = await logseq.DB.datascriptQuery(dataContent);
+        } else if (!inputs[1]) {
+          datascriptQuery = await logseq.DB.datascriptQuery(
+            dataContent,
+            //@ts-ignore
+            inputs[0],
+            inputs[0]
+          );
+        } else {
+          datascriptQuery = await logseq.DB.datascriptQuery(
+            dataContent,
+            //@ts-ignore
+            inputs[0],
+            inputs[1]
+          );
+        }
+
         dataBlock = datascriptQuery.map((i) => i[0]);
       }
 
@@ -257,7 +300,6 @@ const main = async () => {
     logseq.provideUI({
       key: `${kanbanId}`,
       slot,
-      //@ts-expect-error
       reset: true,
       template: drawKanbanBoard(kanban),
     });
