@@ -1,6 +1,10 @@
-const kanbanCss = (width, wrapperWidth) => {
+export const kanbanCss = (
+  width: number,
+  wrapperWidth: number,
+  kanbanId: string
+) => {
   return `
-  .wrapper {
+  #${kanbanId} .wrapper {
     max-width: ${wrapperWidth}px;
     overflow-x: scroll;
     white-space: nowrap;
@@ -12,7 +16,7 @@ const kanbanCss = (width, wrapperWidth) => {
     color: #000
   }
   
-  .react-kanban-card {
+  #${kanbanId}. react-kanban-card {
     border-radius: 3px;
     background-color: #fff;
     padding: 10px;
@@ -40,7 +44,7 @@ const kanbanCss = (width, wrapperWidth) => {
     margin: 0
   }
   
-  .react-kanban-column {
+  #${kanbanId} .react-kanban-column {
     white-space: normal;
     min-width: 290px;
     padding: 15px;
@@ -87,5 +91,3 @@ const kanbanCss = (width, wrapperWidth) => {
   }
  `;
 };
-
-export default kanbanCss;

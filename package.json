@@ -1,6 +1,6 @@
 {
   "name": "logseq-kanban-plugin",
-  "version": "2.7.0",
+  "version": "2.7.1",
   "description": "Simple plugin to help visualise data on a Kanban Board!",
   "main": "dist/index.html",
   "targets": {
@@ -27,6 +27,7 @@
     "icon": "./icon.svg"
   },
   "devDependencies": {
+    "@types/react-dom": "^17.0.14",
     "parcel": "^2.0.1"
   }
 }
