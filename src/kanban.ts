@@ -16,7 +16,7 @@ export const kanbanCss = (
     color: #000
   }
   
-  #${kanbanId}. react-kanban-card {
+  #${kanbanId} .react-kanban-card {
     border-radius: 3px;
     background-color: #fff;
     padding: 10px;
@@ -49,7 +49,7 @@ export const kanbanCss = (
     min-width: 290px;
     padding: 15px;
     border-radius: 2px;
-    background-color: #eee;
+    background-color: #DADADA;
     margin: 5px;
     width: ${width + 40}px;
   }
