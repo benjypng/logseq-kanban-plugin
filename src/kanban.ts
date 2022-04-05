@@ -50,6 +50,7 @@ export const kanbanCss = (
     padding: 15px;
     border-radius: 2px;
     background-color: #DADADA;
+    box-shadow: 5px 10px #888888;
     margin: 5px;
     width: ${width + 40}px;
   }
