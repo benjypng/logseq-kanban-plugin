@@ -1,9 +1,9 @@
 export const kanbanCss = (
-  width: number,
-  wrapperWidth: number,
-  kanbanId: string
+    width: number,
+    wrapperWidth: number,
+    kanbanId: string
 ) => {
-  return `
+    return `
   #${kanbanId} .wrapper {
     max-width: ${wrapperWidth}px;
     overflow-x: scroll;
