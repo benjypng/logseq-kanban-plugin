@@ -242,20 +242,16 @@ const main = async () => {
                 for (let j of i.children) {
                     let payload = {};
                     if (
-                        j.content.startsWith("![") &&
-                        j.content.includes("](") &&
-                        j.content.endsWith(")")
+                        /^\!\[.*?\]\(.*?\)(\{.*?\})?/g.test(j.content)
                     ) {
                         payload = {
                             id: j.id,
                             description: (
                                 <React.Fragment>
                                     <img
-                                        src={`assets://${logseq.settings.pathToLogseq
-                                            }/${j.content.substring(
-                                                j.content.indexOf("/assets/") + 8,
-                                                j.content.length - 1
-                                            )}`}
+                                        src={
+                                            `assets://${logseq.settings.pathToLogseq}/${/\/assets\/(.*)\)/ig.exec(j.content)?.[1]}`
+                                        }
                                     />
                                 </React.Fragment>
                             ),
