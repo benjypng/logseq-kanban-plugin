@@ -1,25 +1,24 @@
 {
   "name": "logseq-kanban-plugin",
-  "version": "2.7.3",
+  "version": "2.7.5",
   "description": "Simple plugin to help visualise data on a Kanban Board!",
   "main": "dist/index.html",
   "targets": {
     "main": false
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "parcel build --no-source-maps src/index.html --public-url ./"
+    "build": "rm -R dist && echo 'dist folder removed'; parcel build --no-source-maps src/index.html --public-url ./"
   },
   "keywords": [],
   "author": "hkgnp",
   "license": "MIT",
   "dependencies": {
     "@asseinfo/react-kanban": "^2.2.0",
-    "@logseq/libs": "0.0.1-alpha.35",
-    "chrono-node": "^1.4.8",
-    "logseq-dateutils": "^0.0.14",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "@logseq/libs": "^0.0.14",
+    "chrono-node": "^2.5.0",
+    "logseq-dateutils": "^0.0.26",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "logseq": {
     "id": "logseq-kanban-plugin",
@@ -27,7 +26,8 @@
     "icon": "./icon.svg"
   },
   "devDependencies": {
-    "@types/react-dom": "^17.0.14",
-    "parcel": "^2.0.1"
+    "@types/react": "^18.0.26",
+    "@types/react-dom": "^18.0.10",
+    "parcel": "^2.8.2"
   }
 }
