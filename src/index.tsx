@@ -100,6 +100,10 @@ const main = async () => {
       //  payload = payload.substring(0, payload.indexOf("CLOCK: ["));
       //}
 
+      //if (payload.includes("SCHEDULED: <")) {
+      //  payload = payload.substring(0, payload.indexOf("SCHEDULED: <"));
+      //}
+
       //if (payload.includes("DEADLINE: <")) {
       //  payload = payload.substring(0, payload.indexOf("DEADLINE: <"));
       //}
