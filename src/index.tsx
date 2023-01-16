@@ -26,7 +26,7 @@ const main = async () => {
   // Set path in settings for adding images to kanban board
   const currGraph = await logseq.App.getCurrentGraph();
   logseq.updateSettings({
-    pathToLogseq: `${currGraph.path}/assets`,
+    pathToLogseq: `${currGraph!.path}/assets`,
   });
 
   // Generate unique identifier
@@ -59,10 +59,11 @@ const main = async () => {
     // Get children data to draw kanban board
     const block = await logseq.Editor.getBlock(uuid, { includeChildren: true });
     // Data from child block comes here
-    let dataBlock = block.children[0]["children"];
+    let dataBlock = block!.children![0]["children"];
 
     // Get width data from the block to allow flexible widths
-    let [parent, width, wrapperWidth] = block.children[0]["content"].split(" ");
+    let [parent, width, wrapperWidth] =
+      block!.children![0]["content"].split(" ");
 
     // Provide style for kanban board
     if (width === undefined && wrapperWidth === undefined) {
@@ -86,20 +87,27 @@ const main = async () => {
     // DOING Do this and that\n:LOGBOOK:\nCLOCK: [2022-01-24 Mon 12:00:03]--[2022-01-24 Mon 12:00:05] =>  00:00:02\nCLOCK: [2022-01-24 Mon 12:00:06]\n:END:
 
     const returnPayload = (content: string) => {
-      let payload = content.replace(/:LOGBOOK:|collapsed:: true/gi, "");
+      let payload = content.replace(":LOGBOOK:", "").replace(":END:", "");
 
-      if (payload.includes("CLOCK: [")) {
-        payload = payload.substring(0, payload.indexOf("CLOCK: ["));
+      if (content.includes("\n")) {
+        payload = payload.substring(0, content.indexOf("\n"));
       }
+      console.log(payload);
+      return payload;
+      //let payload = content.replace(/:LOGBOOK:|collapsed:: true/gi, "");
 
-      if (payload.includes("DEADLINE: <")) {
-        payload = payload.substring(0, payload.indexOf("DEADLINE: <"));
-      }
-      if (content.indexOf(`\nid:: `) === -1) {
-        return payload;
-      } else {
-        return payload.substring(0, content.indexOf(`\nid:: `));
-      }
+      //if (payload.includes("CLOCK: [")) {
+      //  payload = payload.substring(0, payload.indexOf("CLOCK: ["));
+      //}
+
+      //if (payload.includes("DEADLINE: <")) {
+      //  payload = payload.substring(0, payload.indexOf("DEADLINE: <"));
+      //}
+      //if (content.indexOf(`\nid:: `) === -1) {
+      //  return payload;
+      //} else {
+      //  return payload.substring(0, content.indexOf(`\nid:: `));
+      //}
     };
 
     if (parent.toLowerCase() === "tasks") {
