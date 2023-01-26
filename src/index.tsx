@@ -131,6 +131,9 @@ const main = async () => {
           <div class="btnDiv"><button data-on-click="render" class="updateKanbanBtn">Update Kanban</button></div></div>`;
         };
 
+        const regexp = /\:\bquery \[\s(.*)\t\]/s;
+        const matched = regexp.exec(dataContent);
+
         // Remove unnecessary syntax
         dataContent = dataContent
           .replace("#+BEGIN_QUERY", "")
@@ -163,7 +166,9 @@ const main = async () => {
         // Pass query through API
         let datascriptQuery: any[];
         if (!inputs) {
-          datascriptQuery = await logseq.DB.datascriptQuery(dataContent);
+          datascriptQuery = await logseq.DB.datascriptQuery(
+            `[${matched[1].replaceAll("\t", " ")}]`
+          );
         } else if (!inputs[1]) {
           datascriptQuery = await logseq.DB.datascriptQuery(
             dataContent,
