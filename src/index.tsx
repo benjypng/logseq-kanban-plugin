@@ -116,8 +116,9 @@ const main = async () => {
 
       // Check if query
       if (
-        dataContent.startsWith("#+BEGIN_QUERY") &&
-        dataContent.endsWith("#+END_QUERY")
+        (dataContent.startsWith("#+BEGIN_QUERY") &&
+          dataContent.endsWith("#+END_QUERY")) ||
+        dataContent.startsWith("query-table::")
       ) {
         logseq.provideModel({
           async render() {
