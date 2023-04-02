@@ -114,16 +114,17 @@ const main = async () => {
       let dataContent = dataBlock[0].content;
       let inputs: any;
 
+      console.log(dataContent);
+
       // Check if query
       if (
-        (dataContent.startsWith("#+BEGIN_QUERY") &&
-          dataContent.endsWith("#+END_QUERY")) ||
-        dataContent.startsWith("query-table::")
+        dataContent.includes("#+BEGIN_QUERY") &&
+        dataContent.includes("#+END_QUERY")
       ) {
         logseq.provideModel({
           async render() {
-            const tempBlock = await logseq.Editor.insertBlock(block.uuid, "");
-            await logseq.Editor.removeBlock(tempBlock.uuid);
+            const tempBlock = await logseq.Editor.insertBlock(block!.uuid, "");
+            await logseq.Editor.removeBlock(tempBlock!.uuid);
           },
         });
 
@@ -132,59 +133,10 @@ const main = async () => {
           <div class="btnDiv"><button data-on-click="render" class="updateKanbanBtn">Update Kanban</button></div></div>`;
         };
 
-        const regexp = /\:\bquery \[\s(.*)\t\]/s;
+        const regexp = /\[:find((.|\n)*)\]/;
         const matched = regexp.exec(dataContent);
 
-        // Remove unnecessary syntax
-        dataContent = dataContent
-          .replace("#+BEGIN_QUERY", "")
-          .replace("#+END_QUERY", "");
-
-        if (dataContent.includes(":inputs [")) {
-          inputs = dataContent.slice(dataContent.indexOf(":inputs ["));
-          let inputsArr = inputs
-            .substring(0, inputs.indexOf("]"))
-            .replace(":inputs [", "")
-            .replaceAll(":", "")
-            .split(" ");
-
-          inputsArr = inputsArr.map((i) =>
-            i === "today" || i === "yesterday"
-              ? getYYYMMDD(chrono.parse(i)[0].start.date())
-              : getYYYMMDD(
-                  chrono
-                    .parse(i.replace("d", "days").replace("-", " "))[0]
-                    .start.date()
-                )
-          );
-
-          inputs = inputsArr;
-        }
-
-        // Get text after :query
-        dataContent = dataContent.slice(dataContent.indexOf("[:find"));
-
-        // Pass query through API
-        let datascriptQuery: any[];
-        if (!inputs) {
-          datascriptQuery = await logseq.DB.datascriptQuery(
-            `[${matched[1].replaceAll("\t", " ")}]`
-          );
-        } else if (!inputs[1]) {
-          datascriptQuery = await logseq.DB.datascriptQuery(
-            dataContent,
-            //@ts-ignore
-            inputs[0],
-            inputs[0]
-          );
-        } else {
-          datascriptQuery = await logseq.DB.datascriptQuery(
-            dataContent,
-            //@ts-ignore
-            inputs[0],
-            inputs[1]
-          );
-        }
+        let datascriptQuery = await logseq.DB.datascriptQuery(matched[0]);
         dataBlock = datascriptQuery.map((i) => i[0]);
       }
 
