@@ -95,8 +95,6 @@ const main = async () => {
       let dataContent = dataBlock[0].content;
       let inputs: any;
 
-      console.log(dataContent);
-
       // Check if query
       if (
         dataContent.includes("#+BEGIN_QUERY") &&
