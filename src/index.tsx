@@ -3,6 +3,7 @@ import React from "react";
 import ReactDOMServer from "react-dom/server";
 import App from "./App";
 import { kanbanCss } from "./kanban";
+import { BlockEntity } from "@logseq/libs/dist/LSPlugin.user";
 
 type Task = {
   content: string;
@@ -93,7 +94,6 @@ const main = async () => {
 
     if (parent.toLowerCase() === "tasks") {
       let dataContent = dataBlock[0].content;
-      let inputs: any;
 
       // Check if query
       if (
@@ -118,6 +118,10 @@ const main = async () => {
         let datascriptQuery = await logseq.DB.datascriptQuery(matched[0]);
         dataBlock = datascriptQuery.map((i) => i[0]);
       }
+
+      dataBlock = dataBlock.sort((a: BlockEntity, b: BlockEntity) =>
+        a.priority > b.priority ? 1 : b.priority > a.priority ? -1 : 0
+      );
 
       // Filter todo
       const todoObj = dataBlock
