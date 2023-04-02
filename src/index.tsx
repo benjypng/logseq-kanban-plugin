@@ -3,8 +3,6 @@ import React from "react";
 import ReactDOMServer from "react-dom/server";
 import App from "./App";
 import { kanbanCss } from "./kanban";
-import * as chrono from "chrono-node";
-import { getYYYMMDD } from "logseq-dateutils";
 
 type Task = {
   content: string;
@@ -84,30 +82,13 @@ const main = async () => {
     const userConfigs = await logseq.App.getUserConfigs();
     const { preferredWorkflow } = userConfigs;
 
-    // DOING Do this and that\n:LOGBOOK:\nCLOCK: [2022-01-24 Mon 12:00:03]--[2022-01-24 Mon 12:00:05] =>  00:00:02\nCLOCK: [2022-01-24 Mon 12:00:06]\n:END:
-
     const returnPayload = (content: string) => {
       let payload = content.replace(":LOGBOOK:", "").replace(":END:", "");
 
       if (content.includes("\n")) {
         payload = payload.substring(0, content.indexOf("\n"));
       }
-      console.log(payload);
       return payload;
-      //let payload = content.replace(/:LOGBOOK:|collapsed:: true/gi, "");
-
-      //if (payload.includes("CLOCK: [")) {
-      //  payload = payload.substring(0, payload.indexOf("CLOCK: ["));
-      //}
-
-      //if (payload.includes("DEADLINE: <")) {
-      //  payload = payload.substring(0, payload.indexOf("DEADLINE: <"));
-      //}
-      //if (content.indexOf(`\nid:: `) === -1) {
-      //  return payload;
-      //} else {
-      //  return payload.substring(0, content.indexOf(`\nid:: `));
-      //}
     };
 
     if (parent.toLowerCase() === "tasks") {

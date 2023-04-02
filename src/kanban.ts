@@ -1,9 +1,9 @@
 export const kanbanCss = (
-    width: number,
-    wrapperWidth: number,
-    kanbanId: string
+  width: number,
+  wrapperWidth: number,
+  kanbanId: string
 ) => {
-    return `
+  return `
   #${kanbanId} .wrapper {
     max-width: ${wrapperWidth}px;
     overflow-x: scroll;
@@ -15,7 +15,7 @@ export const kanbanCss = (
     margin: 0;
     color: #000
   }
-  
+
   #${kanbanId} .react-kanban-card {
     border-radius: 3px;
     background-color: #fff;
@@ -23,27 +23,27 @@ export const kanbanCss = (
     margin-bottom: 7px;
     width: ${width}px;
   }
-  
+
   .react-kanban-card,
   .react-kanban-card-skeleton {
     box-sizing: border-box;
     min-width: 250px;
   }
-  
+
   .react-kanban-card:hover {
     box-shadow: -5px 10px 15px #aaaaaa;
   }
-  
+
   .react-kanban-card__description {
     padding-top: 0
   }
-  
+
   .react-kanban-card__title {
     display: none;
     padding: 0;
     margin: 0
   }
-  
+
   #${kanbanId} .react-kanban-column {
     white-space: normal;
     min-width: 290px;
@@ -54,17 +54,17 @@ export const kanbanCss = (
     margin: 5px;
     width: ${width + 40}px;
   }
-  
+
   .react-kanban-column input:focus {
     outline: 0
   }
-  
+
   .react-kanban-column-header {
     padding-bottom: 10px;
     font-weight: 700;
     font-size: 120%;
   }
-  
+
   .react-kanban-column:hover {
     transform: translateY(-8px);
     transition: all 0.1s;
