@@ -7,7 +7,7 @@
     "main": false
   },
   "scripts": {
-    "build": "rm -R dist && echo 'dist folder removed'; parcel build --no-source-maps src/index.html --public-url ./"
+    "build": "node build.js"
   },
   "keywords": [],
   "author": "hkgnp",
