@@ -9,6 +9,6 @@ function echo(_error, stdout, _stderr) { console.log(stdout) }
 if (os.type() === 'Linux') 
     exec("rm -R dist && echo 'dist folder removed'; parcel build --no-source-maps src/index.html --public-url ./", echo); 
 else if (os.type() === 'Windows_NT') 
-    exec("echo hello", echo);
+    exec("rmdir /S /Q dist && npx parcel build --no-source-maps src/index.html --public-url ./", echo);
 else
     throw new Error("Unsupported OS found: " + type());
