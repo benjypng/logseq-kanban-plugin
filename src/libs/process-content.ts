@@ -1,6 +1,17 @@
 export const processContent = (content: string) => {
   // Remove markers
-  const markers = ["TODO", "DOING", "NOW", "LATER", "DONE"];
+  const markers = [
+    "NOW",
+    "LATER",
+    "DOING",
+    "DONE",
+    "CANCELLED",
+    "CANCELED",
+    "IN-PROGRESS",
+    "TODO",
+    "WAITING",
+    "WAIT",
+  ];
   for (const m of markers) {
     content = content.replace(m, "");
   }

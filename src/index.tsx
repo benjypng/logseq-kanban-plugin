@@ -4,8 +4,8 @@ import { BlockEntity } from "@logseq/libs/dist/LSPlugin.user";
 import { checkParams } from "./libs/check-params";
 import { Card, Column } from "./types";
 import { Kanban } from "./components/Kanban";
-import { processContent } from "./libs/process-content";
 import { createTaskBoard } from "./helpers/create-task-board";
+import { createQueryBoard } from "./helpers/create-query-board";
 
 const main = async () => {
   console.log("Kanban plugin loaded");
@@ -56,6 +56,10 @@ const main = async () => {
       }
     } else if (params.data_type === "query") {
       // render kanban with query
+      const content = children[0]?.content;
+      if (!content) return;
+
+      board = await createQueryBoard(content, board);
     } else {
       // render regular kanban
       for (const col of children) {

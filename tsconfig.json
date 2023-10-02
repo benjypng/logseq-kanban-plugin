@@ -16,10 +16,7 @@
     "isolatedModules": true,
     "incremental": true,
     "noUncheckedIndexedAccess": true,
-    "baseUrl": "./",
-    "paths": {
-      "~/*": ["src/*"]
-    }
+    "baseUrl": "./"
   },
   "include": [".eslintrc.cjs", "**/*.ts", "**/*.tsx", "**/*.cjs", "**/*.mjs"],
   "exclude": [
