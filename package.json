@@ -1,33 +1,59 @@
 {
   "name": "logseq-kanban-plugin",
-  "version": "2.7.15",
-  "description": "Simple plugin to help visualise data on a Kanban Board!",
-  "main": "dist/index.html",
-  "targets": {
-    "main": false
+  "author": "hkgnp",
+  "description": "Simple plugin to help visualise data on a Kanban Board.",
+  "license": "MIT",
+  "logseq": {
+    "id": "logseq-kanban-plugin",
+    "title": "logseq-kanban-plugin",
+    "icon": "./icon.svg",
+    "main": "dist/index.html"
   },
   "scripts": {
-    "build": "rm -R dist && echo 'dist folder removed'; parcel build --no-source-maps src/index.html --public-url ./"
+    "dev:start": "pnpm add @logseq/libs -S && pnpm add @types/eslint @types/node @typescript-eslint/eslint-plugin @typescript-eslint/parser eslint eslint-config-prettier eslint-plugin-prettier prettier vite vite-plugin-logseq vite-tsconfig-paths typescript -D",
+    "dev:tailwind": "pnpm add tailwindcss cssnano autoprefixer -D && touch tailwind.config.js && touch .postcssrc.cjs && touch src/tailwind.css",
+    "dev": "npx vite",
+    "build": "npx tsc && npx vite build",
+    "preview": "npx vite preview"
   },
-  "keywords": [],
-  "author": "hkgnp",
-  "license": "MIT",
+  "release": {
+    "branches": [
+      "main"
+    ],
+    "plugins": [
+      [
+        "@semantic-release/github",
+        {
+          "assets": [
+            "logseq-kanban-plugin.zip"
+          ]
+        }
+      ]
+    ]
+  },
   "dependencies": {
     "@asseinfo/react-kanban": "^2.2.0",
-    "@logseq/libs": "^0.0.14",
+    "@logseq/libs": "^0.0.15",
     "chrono-node": "^2.6.2",
     "logseq-dateutils": "^0.0.26",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
-  "logseq": {
-    "id": "logseq-kanban-plugin",
-    "title": "logseq-kanban-plugin",
-    "icon": "./icon.svg"
-  },
   "devDependencies": {
+    "@types/eslint": "^8.44.3",
+    "@types/node": "^20.8.0",
     "@types/react": "^18.0.32",
     "@types/react-dom": "^18.0.11",
-    "parcel": "^2.8.3"
+    "@typescript-eslint/eslint-plugin": "^6.7.3",
+    "@typescript-eslint/parser": "^6.7.3",
+    "eslint": "^8.50.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "prettier": "^3.0.3",
+    "react-kanban": "link:@types/asseinfo/react-kanban",
+    "typescript": "^5.2.2",
+    "vite": "^4.4.9",
+    "vite-plugin-logseq": "^1.1.2",
+    "vite-tsconfig-paths": "^4.2.1"
   }
 }
