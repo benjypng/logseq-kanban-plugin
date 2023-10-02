@@ -1,4 +1,3 @@
-//@ts-ignore
 import Board from "@asseinfo/react-kanban";
 import { KanbanProps } from "../types";
 

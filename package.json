@@ -51,7 +51,6 @@
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.0",
     "prettier": "^3.0.3",
-    "react-kanban": "link:@types/asseinfo/react-kanban",
     "typescript": "^5.2.2",
     "vite": "^4.4.9",
     "vite-plugin-logseq": "^1.1.2",
