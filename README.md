@@ -2,48 +2,60 @@
 
 # Overview
 
-As the name suggests, this helper plugin draws kanban boards using the outliner approach. This plugin offers 2 options:
+Draw kanban board based on your blocks. Type `/Kanban` to start. There are 3 ways to do so:
 
-> Please note that you should use **only** 1 of the 2 approaches. They are currently not built to be used together! E.g. if you take the 'TASKS' approach, it will not support having your own headers and will be restricted to only those 3 columns.
+### Normal
 
-1. A more freeform version where you can write your own headers. This approach does not support having items like "TODO" or queries. It is meant to just use the raw text from your blocks.
+Use your parent blocks as headers. For example, the below blocks will give you 3 columns in your kanban respectively: Column 1, Column 2, Column 3
+```md
+- {{renderer :kanban_651a3832-a06f-4dee-8c77-bc15908765e8}}
+ - data
+  - Column 1
+   - The quick brown fox
+  - Column 2
+   - Jumped over
+  - Column 3
+   - The lazy dog
+```
 
-![](/screenshots/demo.gif)
+### Tasks
 
-2. Taking the "TODO, DOING, DONE" or "LATER, NOW, DONE" approach. Just need to ensure that the parent block for your data is labelled `tasks` or `TASKS`. This approach supports only having the above 3 columns.
+Use tasks to populate the Kanban board.
 
-![](/screenshots/demo3.gif)
+```md
+- {{renderer :kanban_651a3832-a06f-4dee-8c77-bc15908765e8}}
+ - tasks
+  - TODO The quick brown fox
+  - DOING Jumped over
+  - DONE The lazy dog
+```
 
-# Adding block references
+### Query
 
-![](/screenshots/blockref-demo.gif)
+Use simple queries to populate the Kanban board. Use the `/query` function and *not* advanced queries.
 
-# Adding Images
+```md
+- {{renderer :kanban_651a3832-a06f-4dee-8c77-bc15908765e8}}
+ - query
+  - {{query((task TODO DONE NOW DOING WAITING))}}
+```
 
-![](/screenshots/img-demo.gif)
+# Adjust card or board width
+You can adjust the widths of the board or cards using the parameters:
+- card-<number in pixels>
+- board-<number in pixels>
 
-# Adjustable Width of Cards
-
-If you need to adjust the width of the card, just include a number (in pixels) after your kanban type. See below for instructions.
-
-![](/screenshots/widthdemo.gif)
-
-# Adjustable Width of Board
-
-If you need to adjust the width of the whole board, just include a number (in pixels) after your width of the card. See video below.
-
-![](/screenshots/boardwidth.gif)
-
-# Using queries
-
-If you have valid queries that produce **Task items (e.g. TODO, DOING)**, they are now supported in the Kanban as well!
-
-![](/screenshots/queries.gif)
+```md
+- {{renderer :kanban_651a3832-a06f-4dee-8c77-bc15908765e8}}
+ - data card-300 board-1000
+  - Column 1
+   - The quick brown fox
+  - Column 2
+   - Jumped over
+  - Column 3
+   - The lazy dog
+```
 
 # Credits
 
 [react-kanban by asseinfo](https://github.com/asseinfo/react-kanban)
-
-# Future
-
-- [ ] Add ability to customise board's colours.
