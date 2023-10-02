@@ -2,10 +2,12 @@ import "@logseq/libs";
 import { renderToString } from "react-dom/server";
 import { BlockEntity } from "@logseq/libs/dist/LSPlugin.user";
 import { checkParams } from "./libs/check-params";
-import { Card, Column } from "./types";
+import { Column, ParamsProps } from "./types";
 import { Kanban } from "./components/Kanban";
 import { createTaskBoard } from "./helpers/create-task-board";
 import { createQueryBoard } from "./helpers/create-query-board";
+import { createNormalBoard } from "./helpers/create-normal-board";
+import { handleStyles } from "./libs/handle-styles";
 
 const main = async () => {
   console.log("Kanban plugin loaded");
@@ -39,7 +41,7 @@ const main = async () => {
     };
     if (children?.length === 0) return;
 
-    const params = checkParams(content);
+    const params: ParamsProps = checkParams(content);
 
     let html: string;
     let board: Column[] = [];
@@ -62,25 +64,12 @@ const main = async () => {
       board = await createQueryBoard(content, board);
     } else {
       // render regular kanban
-      for (const col of children) {
-        let column: Column = {
-          id: col.uuid,
-          title: col.content,
-          cards: [],
-        };
-        if (!col.children) continue;
-        for (const crd of col.children as BlockEntity[]) {
-          let card: Card = {
-            id: crd.uuid,
-            description: crd.content,
-          };
-          column.cards.push(card);
-        }
-        board.push(column);
-      }
+      board = createNormalBoard(board, children);
     }
 
-    html = renderToString(<Kanban columns={board} />);
+    // handle styles
+    logseq.provideStyle(handleStyles(slot, params.card_w, params.board_w));
+    html = renderToString(<Kanban data={{ columns: board }} />);
 
     logseq.provideUI({
       key: `${kanbanId}`,

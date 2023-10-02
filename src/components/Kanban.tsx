@@ -1,11 +1,9 @@
-import { KanbanProps } from "~/types";
 import Board from "@asseinfo/react-kanban";
-import { kanbanStyle } from "./styles";
+import { KanbanProps } from "../types";
 
-export const Kanban = (columns: KanbanProps) => {
-  logseq.provideStyle(kanbanStyle);
-
-  if (!columns || columns.columns.length === 0) {
+export const Kanban = ({ data }: KanbanProps) => {
+  const { columns } = data;
+  if (!columns || columns.length === 0) {
     return (
       <div className="wrapper">
         Enter some parameters, data or access the README for more instructions.
@@ -14,7 +12,7 @@ export const Kanban = (columns: KanbanProps) => {
   } else {
     return (
       <div className="wrapper">
-        <Board>{columns}</Board>
+        <Board>{data}</Board>
       </div>
     );
   }
