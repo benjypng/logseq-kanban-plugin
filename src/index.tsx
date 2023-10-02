@@ -51,25 +51,38 @@ const main = async () => {
 
       switch (true) {
         case markers.includes("TODO") || markers.includes("DOING"):
-          board = createTaskBoard("TODO", "DOING", board, children);
+          board = await createTaskBoard("TODO", "DOING", board, children);
           break;
         default:
-          board = createTaskBoard("NOW", "LATER", board, children);
+          board = await createTaskBoard("NOW", "LATER", board, children);
       }
     } else if (params.data_type === "query") {
       // render kanban with query
       const content = children[0]?.content;
       if (!content) return;
-
       board = await createQueryBoard(content, board);
+      logseq.provideModel({
+        async render() {
+          // Needed to re-render the block
+          const tempBlock = await logseq.Editor.insertBlock(uuid, "", {
+            sibling: false,
+          });
+          if (!tempBlock) return;
+          await logseq.Editor.removeBlock(tempBlock.uuid);
+        },
+      });
     } else {
       // render regular kanban
-      board = createNormalBoard(board, children);
+      board = await createNormalBoard(board, children);
     }
 
     // handle styles
     logseq.provideStyle(handleStyles(slot, params.card_w, params.board_w));
-    html = renderToString(<Kanban data={{ columns: board }} />);
+    if (params.data_type === "query") {
+      html = renderToString(<Kanban data={{ columns: board }} query={true} />);
+    } else {
+      html = renderToString(<Kanban data={{ columns: board }} />);
+    }
 
     logseq.provideUI({
       key: `${kanbanId}`,

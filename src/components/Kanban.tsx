@@ -1,7 +1,7 @@
 import Board from "@asseinfo/react-kanban";
 import { KanbanProps } from "../types";
 
-export const Kanban = ({ data }: KanbanProps) => {
+export const Kanban = ({ data, query }: KanbanProps) => {
   const { columns } = data;
   if (!columns || columns.length === 0) {
     return (
@@ -13,6 +13,11 @@ export const Kanban = ({ data }: KanbanProps) => {
     return (
       <div className="wrapper">
         <Board>{data}</Board>
+        {query && (
+          <button className="query-btn" data-on-click="render">
+            Re-render Query Data
+          </button>
+        )}
       </div>
     );
   }

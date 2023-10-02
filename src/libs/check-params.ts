@@ -1,4 +1,4 @@
-import { ParamsProps } from "~/types";
+import { ParamsProps } from "../types";
 
 export const checkParams = (content: string): ParamsProps => {
   let rxToCheck: { [key: string]: RegExp | string } = {

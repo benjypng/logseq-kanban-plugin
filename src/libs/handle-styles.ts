@@ -4,12 +4,22 @@ export const handleStyles = (
   board_w: string | undefined,
 ) => {
   return `
+#${slot} .query-btn {
+  color: #000;
+  border: 1px solid black;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  margin-left: 10px;
+  padding: 1px 10px;
+  border-radius: 8px;
+  background-color: #eee;
+}
 #${slot} .wrapper {
+  color: #000;
   max-width: ${board_w}px;
   overflow-x: scroll;
   white-space: nowrap;
 }
-
 .react-kanban-board{
     padding:5px
 }
@@ -19,19 +29,13 @@ export const handleStyles = (
     padding:10px;
     margin-bottom:7px
 }
-.react-kanban-card-skeleton,.react-kanban-card,.react-kanban-card-adder-form{
+#${slot} .react-kanban-card-skeleton,.react-kanban-card,.react-kanban-card-adder-form{
     box-sizing:border-box;
     max-width:${card_w ?? 250}px;
     min-width:${card_w ?? 250}px
 }
-.react-kanban-card--dragging{
-    box-shadow:2px 2px grey
-}
 .react-kanban-card__description{
     padding-top:0px
-}
-.react-kanban-card__title{
-    display:none;
 }
 .react-kanban-column{
     padding:15px;
@@ -66,7 +70,7 @@ export const handleStyles = (
     font-weight:bold
 }
 .react-kanban-card-adder-button:hover{
-    background-color:#ccc
+    box-shadow: -5px 10px 15px #aaaaaa;
 }
 .react-kanban-card-adder-form__title{
     font-weight:bold;
@@ -104,6 +108,10 @@ export const handleStyles = (
 .react-kanban-column-header{
     padding-bottom:10px;
     font-weight:bold
+}
+.react-kanban-column:hover {
+    transform: translateY(-8px);
+    transition: all 0.1s;
 }
 .react-kanban-column-header input:focus{
     outline:none
