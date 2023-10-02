@@ -19,3 +19,5 @@ export type ParamsProps = {
 export type KanbanProps = {
   columns: Column[];
 };
+
+export type Task = "TODO" | "DOING" | "NOW" | "LATER" | "DONE";

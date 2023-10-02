@@ -4,6 +4,8 @@ import { BlockEntity } from "@logseq/libs/dist/LSPlugin.user";
 import { checkParams } from "./libs/check-params";
 import { Card, Column } from "./types";
 import { Kanban } from "./components/Kanban";
+import { processContent } from "./libs/process-content";
+import { createTaskBoard } from "./helpers/create-task-board";
 
 const main = async () => {
   console.log("Kanban plugin loaded");
@@ -43,6 +45,15 @@ const main = async () => {
     let board: Column[] = [];
     if (params.data_type === "tasks") {
       // render kanban with tasks
+      const markers = children.map((c: BlockEntity) => c.marker);
+
+      switch (true) {
+        case markers.includes("TODO") || markers.includes("DOING"):
+          board = createTaskBoard("TODO", "DOING", board, children);
+          break;
+        default:
+          board = createTaskBoard("NOW", "LATER", board, children);
+      }
     } else if (params.data_type === "query") {
       // render kanban with query
     } else {
