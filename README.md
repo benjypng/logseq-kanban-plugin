@@ -18,7 +18,7 @@ Use your parent blocks as headers. For example, the below blocks will give you 3
    - The lazy dog
 ```
 
-## Normal with Queries
+### Normal with Queries
 
 Use your parent blocks as headers, and use `/query` function as child blocks. Advanced queries may not work.
 
