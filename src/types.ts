@@ -13,7 +13,7 @@ export type ParamsProps = {
   [key: string]: string | undefined;
   card_w?: string;
   board_w?: string;
-  data_type?: "query" | "tasks" | "";
+  data_type?: "query" | "query-tasks" | "tasks" | "";
 };
 
 export type KanbanProps = {

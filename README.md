@@ -18,6 +18,19 @@ Use your parent blocks as headers. For example, the below blocks will give you 3
    - The lazy dog
 ```
 
+## Normal with Queries
+
+Use your parent blocks as headers, and use `/query` function as child blocks. Advanced queries may not work.
+
+```md
+- {{renderer :kanban_651ae900-af3c-4bef-973a-77731a060b29}}
+ - query
+  - Column 1
+   - {{query [[Cards for Column 1]]}}
+  - Column 2
+   - {{query [[Cards for Column 2]]}}
+```
+
 ### Tasks
 
 Use tasks to populate the Kanban board.
@@ -30,13 +43,13 @@ Use tasks to populate the Kanban board.
   - DONE The lazy dog
 ```
 
-### Query
+### Query Tasks
 
-Use simple queries to populate the Kanban board. Use the `/query` function and *not* advanced queries.
+Use simple queries to populate the Kanban board. Use the `/query` function. Advanced queries may not work.
 
 ```md
 - {{renderer :kanban_651a3832-a06f-4dee-8c77-bc15908765e8}}
- - query
+ - query-tasks
   - {{query((task TODO DONE NOW DOING WAITING))}}
 ```
 

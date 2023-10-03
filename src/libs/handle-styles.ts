@@ -23,16 +23,20 @@ export const handleStyles = (
 .react-kanban-board{
     padding:5px
 }
+#${slot} .react-kanban-card{
+  max-width:${card_w ?? 250}px;
+  min-width:${card_w ?? 250}px
+}
 .react-kanban-card{
     border-radius:3px;
     background-color:#fff;
     padding:10px;
     margin-bottom:7px
 }
-#${slot} .react-kanban-card-skeleton,.react-kanban-card,.react-kanban-card-adder-form{
+.react-kanban-card-skeleton,.react-kanban-card,.react-kanban-card-adder-form{
     box-sizing:border-box;
-    max-width:${card_w ?? 250}px;
-    min-width:${card_w ?? 250}px
+    max-width:250px;
+    min-width:250px
 }
 .react-kanban-card__description{
     padding-top:0px

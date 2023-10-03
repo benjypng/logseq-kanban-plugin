@@ -8,6 +8,7 @@ import { createTaskBoard } from "./helpers/create-task-board";
 import { createQueryBoard } from "./helpers/create-query-board";
 import { createNormalBoard } from "./helpers/create-normal-board";
 import { handleStyles } from "./libs/handle-styles";
+import { createNormalBoardWithQuery } from "./helpers/create-normal-query-board";
 
 const main = async () => {
   console.log("Kanban plugin loaded");
@@ -56,7 +57,7 @@ const main = async () => {
         default:
           board = await createTaskBoard("NOW", "LATER", board, children);
       }
-    } else if (params.data_type === "query") {
+    } else if (params.data_type === "query-tasks") {
       // render kanban with query
       const content = children[0]?.content;
       if (!content) return;
@@ -71,6 +72,9 @@ const main = async () => {
           await logseq.Editor.removeBlock(tempBlock.uuid);
         },
       });
+    } else if (params.data_type === "query") {
+      // render regular kanban with queries
+      board = await createNormalBoardWithQuery(board, children);
     } else {
       // render regular kanban
       board = await createNormalBoard(board, children);
