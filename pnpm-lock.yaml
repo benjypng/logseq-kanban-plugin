@@ -58,9 +58,6 @@ devDependencies:
   prettier:
     specifier: ^3.0.3
     version: 3.0.3
-  react-kanban:
-    specifier: link:@types/asseinfo/react-kanban
-    version: link:@types/asseinfo/react-kanban
   typescript:
     specifier: ^5.2.2
     version: 5.2.2

@@ -31,7 +31,7 @@ export const processContent = async (
     str = str.substring(0, str.indexOf(":LOGBOOK:"));
 
   //  Check for block
-  const uuid = /id\:\:(.*)/.exec(content);
+  const uuid = /id::(.*)/.exec(content);
   if (uuid) {
     const contentText = content.substring(0, content.indexOf("id:: "));
     str = reactStringReplace(contentText, contentText, (match) => (
@@ -51,14 +51,14 @@ export const processContent = async (
   }
 
   // Check for image
-  const rxImgRef = /\!\[(.*?)\}/g;
+  const rxImgRef = /!\[(.*?)\}/g;
   const matchedImgRefArray = [...content.matchAll(rxImgRef)];
 
   if (matchedImgRefArray.length > 0) {
     for (const i of matchedImgRefArray) {
       const filename = /\(\.\.\/assets\/(.*?)\)/.exec(i[1]!)![1];
-      const height = /\:height(.*?)(\d+)/.exec(i[0])![2];
-      const width = /\:width(.*?)(\d+)/.exec(i[0])![2];
+      const height = /:height(.*?)(\d+)/.exec(i[0])![2];
+      const width = /:width(.*?)(\d+)/.exec(i[0])![2];
       const elem = (
         <img
           src={`assets://${path}/assets/${filename}`}
@@ -67,6 +67,20 @@ export const processContent = async (
         />
       );
       str = reactStringReplace(str, i[0], () => elem);
+    }
+  }
+
+  //Check for link
+  const linkPrefixes = ["mailto:", "http://", "https://"];
+
+  for (const p of linkPrefixes) {
+    if (content.startsWith(p)) {
+      const elem = (
+        <a href={content} target="_blank" className="external-link">
+          {content}
+        </a>
+      );
+      str = reactStringReplace(str, content, () => elem);
     }
   }
 
