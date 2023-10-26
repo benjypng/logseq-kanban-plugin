@@ -71,16 +71,18 @@ export const processContent = async (
   }
 
   //Check for link
-  const linkPrefixes = ["mailto:", "http://", "https://"];
+  const rxLinkRef =
+    /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/g;
+  const matchedLinkArr = [...content.matchAll(rxLinkRef)];
 
-  for (const p of linkPrefixes) {
-    if (content.startsWith(p)) {
+  if (matchedLinkArr.length > 0) {
+    for (const l of matchedLinkArr) {
       const elem = (
-        <a href={content} target="_blank" className="external-link">
-          {content}
+        <a href={l[0]} target="_blank" className="external-link">
+          {l[0]}
         </a>
       );
-      str = reactStringReplace(str, content, () => elem);
+      str = reactStringReplace(str, l[0], () => elem);
     }
   }
 
