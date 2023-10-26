@@ -1,13 +1,13 @@
 import { ParamsProps } from "../types";
 
 export const checkParams = (content: string): ParamsProps => {
-  let rxToCheck: { [key: string]: RegExp | string } = {
-    card_w: /card\-(.*?)(\d+)/,
-    board_w: /board\-(.*?)(\d+)/,
-    data_type: /(query|tasks)/i,
+  const rxToCheck: { [key: string]: RegExp | string } = {
+    card_w: /card-(.*?)(\d+)/,
+    board_w: /board-(.*?)(\d+)/,
+    data_type: /(query-tasks|query|tasks)/i,
   };
 
-  let styles: ParamsProps = { card_w: "", board_w: "", data_type: "" };
+  const styles: ParamsProps = { card_w: "", board_w: "", data_type: "" };
   for (const rx of Object.keys(rxToCheck)) {
     const newVal = (rxToCheck[rx] as RegExp).exec(content);
     if (newVal && newVal[2]) {

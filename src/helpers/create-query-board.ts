@@ -27,14 +27,14 @@ export const createQueryBoard = async (
   const queryResults = await logseq.DB.q(queryString[1]);
   if (!queryResults) return board;
 
-  let markers = [...new Set(queryResults.map((c: BlockEntity) => c.marker))],
-    order = markerOrder;
+  let markers = [...new Set(queryResults.map((c: BlockEntity) => c.marker))];
+  const order = markerOrder;
   markers = sortQueryMarkers(markers, order);
   board = markers.map((m) => ({ id: m, title: m, cards: [] }));
 
   for (const r of queryResults) {
     const content = (await processContent(r.content)) as string;
-    let assignCol = board.filter((c) => c.id === r.marker)[0];
+    const assignCol = board.filter((c) => c.id === r.marker)[0];
     if (!assignCol) continue;
     assignCol?.cards.push({ id: r.uuid, description: content });
   }
