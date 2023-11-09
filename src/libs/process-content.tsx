@@ -70,6 +70,25 @@ export const processContent = async (
     }
   }
 
+  // Check for block link e.g. []()
+  const rxBlockLinkRef = /(\[(.*?)\])(\((.*?)\))/g;
+  const matchedBlockLinkRefArray = [...content.matchAll(rxBlockLinkRef)];
+
+  if (matchedBlockLinkRefArray.length > 0) {
+    for (const i of matchedBlockLinkRefArray) {
+      if (i.length > 0) {
+        const name = i[2];
+        const link = i[4];
+        const elem = (
+          <a href={link} target="_blank" className="external-link">
+            {name}
+          </a>
+        );
+        str = reactStringReplace(str, i[0], () => elem);
+      }
+    }
+  }
+
   //Check for link
   const rxLinkRef =
     /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/g;
