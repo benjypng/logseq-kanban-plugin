@@ -5,37 +5,17 @@ export const processContent = async (
   content: string,
 ): Promise<ReactNode | string> => {
   if (!content) return;
+  const { name: graphName, path } = (await logseq.App.getCurrentGraph())!;
   let str: ReactNode[] | string = content;
-
-  const { name, path } = (await logseq.App.getCurrentGraph())!;
-
-  // Remove markers
-  const markers = [
-    "NOW",
-    "LATER",
-    "DOING",
-    "DONE",
-    "CANCELLED",
-    "CANCELED",
-    "IN-PROGRESS",
-    "TODO",
-    "WAITING",
-    "WAIT",
-  ];
-  for (const m of markers) {
-    str = str.replace(m, "");
-  }
-
-  // Remove logbook
-  if (content.indexOf(":LOGBOOK:") !== -1)
-    str = str.substring(0, str.indexOf(":LOGBOOK:"));
 
   //  Check for block
   const uuid = /id::(.*)/.exec(content);
   if (uuid) {
     const contentText = content.substring(0, content.indexOf("id:: "));
     str = reactStringReplace(contentText, contentText, (match) => (
-      <a href={`logseq://graph/${name}?block-id=${uuid[1]?.trim()}`}>{match}</a>
+      <a href={`logseq://graph/${graphName}?block-id=${uuid[1]?.trim()}`}>
+        {match}
+      </a>
     ));
   }
 
@@ -45,7 +25,9 @@ export const processContent = async (
 
   if (matchedPageRefArray.length > 0) {
     for (const m of matchedPageRefArray) {
-      const elem = <a href={`logseq://graph/${name}?page=${m[2]}`}>{m[2]}</a>;
+      const elem = (
+        <a href={`logseq://graph/${graphName}?page=${m[2]}`}>{m[2]}</a>
+      );
       str = reactStringReplace(str, m[1], () => elem);
     }
   }
@@ -76,16 +58,14 @@ export const processContent = async (
 
   if (matchedBlockLinkRefArray.length > 0) {
     for (const i of matchedBlockLinkRefArray) {
-      if (i.length > 0) {
-        const name = i[2];
-        const link = i[4];
-        const elem = (
-          <a href={link} target="_blank" className="external-link">
-            {name}
-          </a>
-        );
-        str = reactStringReplace(str, i[0], () => elem);
-      }
+      const name = i[2];
+      const link = i[4];
+      const elem = (
+        <a href={link} target="_blank" className="external-link">
+          {name}
+        </a>
+      );
+      str = reactStringReplace(str, i[0], () => elem);
     }
   }
 
@@ -102,6 +82,28 @@ export const processContent = async (
         </a>
       );
       str = reactStringReplace(str, l[0], () => elem);
+    }
+  }
+
+  // Check for bold
+  const rxBoldRef = /(\*\*(.*?)\*\*)/g;
+  const matchedBoldArr = [...content.matchAll(rxBoldRef)];
+
+  if (matchedBoldArr.length > 0) {
+    for (const i of matchedBoldArr) {
+      const elem = <b>{i[2]}</b>;
+      str = reactStringReplace(str, i[0], () => elem);
+    }
+  }
+
+  // Check for bold
+  const rxItalicsRef = /(\*(.*?)\*)/g;
+  const matchedItacliesArr = [...content.matchAll(rxItalicsRef)];
+
+  if (matchedItacliesArr.length > 0) {
+    for (const i of matchedItacliesArr) {
+      const elem = <i>{i[2]}</i>;
+      str = reactStringReplace(str, i[0], () => elem);
     }
   }
 
