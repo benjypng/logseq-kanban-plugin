@@ -1,9 +1,8 @@
-//@ts-nocheck
-export const sortQueryMarkers = (markers, order) => {
+export const sortQueryMarkers = (markers: any, order: any) => {
   return markers.sort(
-    (a, b) =>
+    (a: any, b: any) =>
       (order[a] || order.default) - (order[b] || order.default) ||
       a > b ||
       -(a < b),
-  );
-};
+  )
+}

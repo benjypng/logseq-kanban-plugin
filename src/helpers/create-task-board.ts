@@ -1,4 +1,5 @@
 import { BlockEntity } from "@logseq/libs/dist/LSPlugin.user";
+
 import { processContent } from "../libs/process-content";
 import { Column } from "../types";
 

@@ -1,24 +1,24 @@
-export type Card = {
+export interface Card {
   id: string;
   description: string;
-};
+}
 
-export type Column = {
+export interface Column {
   id: string;
   title: string;
   cards: Card[];
-};
+}
 
-export type ParamsProps = {
+export interface ParamsProps {
   [key: string]: string | undefined;
   card_w?: string;
   board_w?: string;
   data_type?: "query" | "query-tasks" | "tasks" | "";
-};
+}
 
-export type KanbanProps = {
+export interface KanbanProps {
   data: { columns: Column[] };
   query?: boolean;
-};
+}
 
 export type Task = "TODO" | "DOING" | "NOW" | "LATER" | "DONE";

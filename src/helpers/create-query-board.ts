@@ -1,7 +1,8 @@
 import { BlockEntity } from "@logseq/libs/dist/LSPlugin.user";
+
 import { processContent } from "../libs/process-content";
-import { Column } from "../types";
 import { sortQueryMarkers } from "../libs/sort-query-markers";
+import { Column } from "../types";
 
 const markerOrder = {
   NOW: 2,

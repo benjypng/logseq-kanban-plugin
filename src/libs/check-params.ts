@@ -1,7 +1,7 @@
 import { ParamsProps } from "../types";
 
 export const checkParams = (content: string): ParamsProps => {
-  const rxToCheck: { [key: string]: RegExp | string } = {
+  const rxToCheck: Record<string, RegExp | string> = {
     card_w: /card-(.*?)(\d+)/,
     board_w: /board-(.*?)(\d+)/,
     data_type: /(query-tasks|query|tasks)/i,

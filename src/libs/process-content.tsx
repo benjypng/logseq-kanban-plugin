@@ -1,12 +1,13 @@
 import { ReactNode } from "react";
-import { removeMarkers } from "./process-content/remove-markers";
+
 import { handleBlockReference } from "./process-content/handle-block-reference";
-import { handlePageReference } from "./process-content/handle-page-reference";
-import { handleImage } from "./process-content/handle-image";
-import { handleLink } from "./process-content/handle-link";
-import { handleTag } from "./process-content/handle-tag";
 import { handleBold } from "./process-content/handle-bold";
+import { handleImage } from "./process-content/handle-image";
 import { handleItalics } from "./process-content/handle-italics";
+import { handleLink } from "./process-content/handle-link";
+import { handlePageReference } from "./process-content/handle-page-reference";
+import { handleTag } from "./process-content/handle-tag";
+import { removeMarkers } from "./process-content/remove-markers";
 
 export const processContent = async (
   content: string,

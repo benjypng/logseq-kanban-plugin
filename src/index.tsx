@@ -1,14 +1,16 @@
 import "@logseq/libs";
-import { renderToString } from "react-dom/server";
+
 import { BlockEntity } from "@logseq/libs/dist/LSPlugin.user";
-import { checkParams } from "./libs/check-params";
-import { Column, ParamsProps } from "./types";
+import { renderToString } from "react-dom/server";
+
 import { Kanban } from "./components/Kanban";
-import { createTaskBoard } from "./helpers/create-task-board";
-import { createQueryBoard } from "./helpers/create-query-board";
 import { createNormalBoard } from "./helpers/create-normal-board";
-import { handleStyles } from "./libs/handle-styles";
 import { createNormalBoardWithQuery } from "./helpers/create-normal-query-board";
+import { createQueryBoard } from "./helpers/create-query-board";
+import { createTaskBoard } from "./helpers/create-task-board";
+import { checkParams } from "./libs/check-params";
+import { handleStyles } from "./libs/handle-styles";
+import { Column, ParamsProps } from "./types";
 
 const main = async () => {
   console.log("Kanban plugin loaded");
