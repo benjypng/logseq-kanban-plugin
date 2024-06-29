@@ -1,7 +1,7 @@
 export const kanbanCss = (
   width: number,
   wrapperWidth: number,
-  kanbanId: string
+  kanbanId: string,
 ) => {
   return `
   #${kanbanId} .wrapper {

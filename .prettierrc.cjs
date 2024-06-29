@@ -1,5 +1,5 @@
 const config = {
-  trailingComma: 'all',
-}
+  trailingComma: "all",
+};
 
-module.exports = config
+module.exports = config;
