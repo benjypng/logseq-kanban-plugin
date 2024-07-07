@@ -15,8 +15,12 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { BlockEntity, BlockUUIDTuple } from '@logseq/libs/dist/LSPlugin'
-import React, { useEffect, useState } from 'react'
+import {
+  BlockEntity,
+  BlockUUIDTuple,
+  IBatchBlock,
+} from '@logseq/libs/dist/LSPlugin'
+import React, { useState } from 'react'
 
 interface SortableItemProps {
   id: string
@@ -166,6 +170,7 @@ export const KanbanBoard = ({ uuid, data }: KanbanBoardProps) => {
                 0,
                 movedItem,
               )
+              console.log('Moved Item', movedItem)
             } else {
               // If dropped directly on a column, add to the end
               newColumns[destColumnIndex]?.children?.push(movedItem)
@@ -178,24 +183,37 @@ export const KanbanBoard = ({ uuid, data }: KanbanBoardProps) => {
           }
         }
 
-        updateBlocks(newColumns)
+        setTimeout(() => {
+          updateBlocks(newColumns)
+        }, 100)
         return newColumns
       })
     }
     setActiveId(null)
   }
 
-  const updateBlocks = async (columns: any) => {
+  const updateBlocks = async (columns: BlockEntity[]) => {
     const blk = await logseq.Editor.getBlock(uuid, { includeChildren: true })
     if (!blk) return
     blk.children?.forEach(async (blk) => {
-      await logseq.Editor.removeBlock((blk as BlockEntity).uuid)
+      if (blk.children) {
+        blk.children.forEach(async (child) => {
+          await logseq.Editor.removeBlock(child.uuid)
+        })
+      }
+      //await logseq.Editor.insertBlock(blk.uuid, )
     })
-    console.log(columns)
-    await logseq.Editor.insertBatchBlock(uuid, columns, {
-      sibling: false,
-      keepUUID: true,
-    })
+    // TODO: For some reason, references are lost despite blocks retaining their UUID
+    // TODO: Maybe can try to insert just the child blocks
+
+    await logseq.Editor.insertBatchBlock(
+      uuid,
+      columns as unknown as IBatchBlock,
+      {
+        sibling: false,
+        keepUUID: true,
+      },
+    )
   }
 
   const getTaskContent = (uuid: string): string => {

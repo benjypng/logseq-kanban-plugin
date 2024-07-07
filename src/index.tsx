@@ -91,30 +91,7 @@ const main = async () => {
       includeChildren: true,
     })
     if (!rootBlk) return
-    let { children: data } = rootBlk
-    function addUuidToProperties(arr: any[]): any[] {
-      return arr.map((item) => {
-        // Create a new object with all properties of the original item
-        const newItem = { ...item }
-
-        // Add uuid to properties.id
-        newItem.properties = {
-          ...newItem.properties,
-          id: newItem.uuid,
-        }
-
-        // If the item has children, recursively apply the same transformation
-        if (Array.isArray(newItem.children) && newItem.children.length > 0) {
-          newItem.children = addUuidToProperties(newItem.children)
-        }
-
-        return newItem
-      })
-    }
-
-    // Usage
-    if (!data) return
-    data = addUuidToProperties(data)
+    const { children: data } = rootBlk
 
     setTimeout(() => {
       const el = parent.document.getElementById(kanbanId)
