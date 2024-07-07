@@ -91,13 +91,36 @@ const main = async () => {
       includeChildren: true,
     })
     if (!rootBlk) return
-    const { children: data } = rootBlk
+    let { children: data } = rootBlk
+    function addUuidToProperties(arr: any[]): any[] {
+      return arr.map((item) => {
+        // Create a new object with all properties of the original item
+        const newItem = { ...item }
+
+        // Add uuid to properties.id
+        newItem.properties = {
+          ...newItem.properties,
+          id: newItem.uuid,
+        }
+
+        // If the item has children, recursively apply the same transformation
+        if (Array.isArray(newItem.children) && newItem.children.length > 0) {
+          newItem.children = addUuidToProperties(newItem.children)
+        }
+
+        return newItem
+      })
+    }
+
+    // Usage
+    if (!data) return
+    data = addUuidToProperties(data)
 
     setTimeout(() => {
       const el = parent.document.getElementById(kanbanId)
       if (!el || !el.isConnected || !data) return
       const root = createRoot(el)
-      root.render(<KanbanDnd data={data as BlockEntity[]} />)
+      root.render(<KanbanDnd uuid={uuid} data={data as BlockEntity[]} />)
     }, 0)
   })
 
