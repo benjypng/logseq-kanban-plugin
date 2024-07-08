@@ -5,87 +5,13 @@ import {
   DragOverlay,
   DragStartEvent,
   PointerSensor,
-  useDroppable,
   useSensor,
   useSensors,
 } from '@dnd-kit/core'
-import {
-  SortableContext,
-  useSortable,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable'
-import { CSS } from '@dnd-kit/utilities'
-import {
-  BlockEntity,
-  BlockUUIDTuple,
-  IBatchBlock,
-} from '@logseq/libs/dist/LSPlugin'
+import { BlockEntity, IBatchBlock } from '@logseq/libs/dist/LSPlugin'
 import React, { useState } from 'react'
 
-interface SortableItemProps {
-  id: string
-  children: React.ReactNode
-}
-
-const SortableItem: React.FC<SortableItemProps> = ({ id, children }) => {
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id })
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  }
-
-  return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
-      className="task"
-    >
-      {children}
-    </div>
-  )
-}
-
-interface ColumnProps {
-  id: string
-  title: string
-  tasks: (BlockEntity | BlockUUIDTuple)[]
-}
-
-const Column: React.FC<ColumnProps> = ({ id, title, tasks }) => {
-  const { setNodeRef } = useDroppable({
-    id: id,
-  })
-
-  return (
-    <div ref={setNodeRef} className="column" data-column-id={id}>
-      <h2>{title}</h2>
-      <SortableContext
-        items={tasks.map((task) =>
-          typeof task === 'object' && 'uuid' in task ? task.uuid : task[1],
-        )}
-        strategy={verticalListSortingStrategy}
-      >
-        {tasks.map((task) => {
-          const taskId =
-            typeof task === 'object' && 'uuid' in task ? task.uuid : task[1]
-          const taskContent =
-            typeof task === 'object' && 'content' in task
-              ? task.content
-              : task[1]
-          return (
-            <SortableItem key={taskId} id={taskId}>
-              {taskContent}
-            </SortableItem>
-          )
-        })}
-      </SortableContext>
-    </div>
-  )
-}
+import { Column } from '../components/Column'
 
 interface KanbanBoardProps {
   uuid: string
@@ -185,7 +111,7 @@ export const KanbanBoard = ({ uuid, data }: KanbanBoardProps) => {
 
         setTimeout(() => {
           updateBlocks(newColumns)
-        }, 100)
+        }, 0)
         return newColumns
       })
     }
@@ -195,10 +121,10 @@ export const KanbanBoard = ({ uuid, data }: KanbanBoardProps) => {
   const updateBlocks = async (columns: BlockEntity[]) => {
     const blk = await logseq.Editor.getBlock(uuid, { includeChildren: true })
     if (!blk) return
-    blk.children?.forEach(async (blk) => {
-      if (blk.children) {
+    blk.children?.forEach((blk) => {
+      if ('children' in blk && blk.children) {
         blk.children.forEach(async (child) => {
-          await logseq.Editor.removeBlock(child.uuid)
+          await logseq.Editor.removeBlock((child as BlockEntity).uuid)
         })
       }
       //await logseq.Editor.insertBlock(blk.uuid, )
@@ -208,7 +134,7 @@ export const KanbanBoard = ({ uuid, data }: KanbanBoardProps) => {
 
     await logseq.Editor.insertBatchBlock(
       uuid,
-      columns as unknown as IBatchBlock,
+      columns as unknown as IBatchBlock[],
       {
         sibling: false,
         keepUUID: true,
