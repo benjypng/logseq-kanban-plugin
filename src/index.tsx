@@ -21,7 +21,7 @@ const main = async () => {
   logseq.Editor.registerSlashCommand('Kanban', async (e) => {
     await logseq.Editor.insertAtEditingCursor(`{{renderer :kanban_${e.uuid}}}`)
   })
-  logseq.Editor.registerSlashCommand('Kanban (DND))', async (e) => {
+  logseq.Editor.registerSlashCommand('Kanban (DND)', async (e) => {
     await logseq.Editor.insertAtEditingCursor(
       `{{renderer :kanbandnd_${e.uuid}}}`,
     )

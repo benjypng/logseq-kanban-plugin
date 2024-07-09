@@ -14,11 +14,10 @@ import React, { useState } from 'react'
 import { Column } from '../components/Column'
 
 interface KanbanBoardProps {
-  uuid: string
   data: BlockEntity[]
 }
 
-export const KanbanBoard = ({ uuid, data }: KanbanBoardProps) => {
+export const KanbanBoard: React.FC<KanbanBoardProps> = ({ data }) => {
   const [columns, setColumns] = useState<BlockEntity[]>(data)
   const [activeId, setActiveId] = useState<string | null>(null)
 
@@ -28,7 +27,7 @@ export const KanbanBoard = ({ uuid, data }: KanbanBoardProps) => {
     setActiveId(event.active.id as string)
   }
 
-  const handleDragEnd = async (event: DragEndEvent) => {
+  const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
 
     if (active.id !== over?.id) {
@@ -37,81 +36,73 @@ export const KanbanBoard = ({ uuid, data }: KanbanBoardProps) => {
           JSON.stringify(prevColumns),
         ) as BlockEntity[]
 
-        let sourceColumnIndex: number | undefined,
-          destColumnIndex: number | undefined,
+        let sourceColumn: BlockEntity | undefined,
+          destColumn: BlockEntity | undefined,
           sourceItemIndex: number | undefined,
           destItemIndex: number | undefined
 
         // Find source column and item index
-        newColumns.forEach((column, columnIndex: number) => {
-          const itemIndex = column.children?.findIndex(
+        sourceColumn = newColumns.find((column) =>
+          column.children?.some(
+            (item) =>
+              (typeof item === 'object' && 'uuid' in item
+                ? item.uuid
+                : item[1]) === active.id,
+          ),
+        )
+        if (sourceColumn) {
+          sourceItemIndex = sourceColumn.children?.findIndex(
             (item) =>
               (typeof item === 'object' && 'uuid' in item
                 ? item.uuid
                 : item[1]) === active.id,
           )
-          if (itemIndex !== -1 && itemIndex !== undefined) {
-            sourceColumnIndex = columnIndex
-            sourceItemIndex = itemIndex
-          }
-        })
+        }
 
         // Find destination column
-        destColumnIndex = newColumns.findIndex(
-          (column: BlockEntity) => column.uuid === over?.id,
-        )
-        if (destColumnIndex === -1) {
-          // If not dropped on a column, find the column containing the item
-          newColumns.forEach((column, columnIndex) => {
-            const itemIndex = column.children?.findIndex(
+        destColumn = newColumns.find((column) => column.uuid === over?.id)
+        if (!destColumn) {
+          destColumn = newColumns.find((column) =>
+            column.children?.some(
+              (item) =>
+                (typeof item === 'object' && 'uuid' in item
+                  ? item.uuid
+                  : item[1]) === over?.id,
+            ),
+          )
+          if (destColumn) {
+            destItemIndex = destColumn.children?.findIndex(
               (item) =>
                 (typeof item === 'object' && 'uuid' in item
                   ? item.uuid
                   : item[1]) === over?.id,
             )
-            if (itemIndex !== -1 && itemIndex !== undefined) {
-              destColumnIndex = columnIndex
-              destItemIndex = itemIndex
-            }
-          })
+          }
         }
 
-        if (
-          sourceColumnIndex !== undefined &&
-          destColumnIndex !== undefined &&
-          sourceItemIndex !== undefined
-        ) {
+        if (sourceColumn && destColumn && sourceItemIndex !== undefined) {
           // Move the item
           const [movedItem] =
-            newColumns[sourceColumnIndex]?.children?.splice(
-              sourceItemIndex,
-              1,
-            ) || []
+            sourceColumn.children?.splice(sourceItemIndex, 1) || []
 
           if (movedItem) {
             if (destItemIndex !== undefined) {
               // Insert before the item it was dropped on
-              newColumns[destColumnIndex]?.children?.splice(
-                destItemIndex,
-                0,
-                movedItem,
-              )
-              console.log('Moved Item', movedItem)
+              destColumn.children?.splice(destItemIndex, 0, movedItem)
             } else {
               // If dropped directly on a column, add to the end
-              newColumns[destColumnIndex]?.children?.push(movedItem)
+              destColumn.children?.push(movedItem)
             }
 
             // Update the parent of the moved item
             if (typeof movedItem === 'object' && 'parent' in movedItem) {
-              movedItem.parent = { id: newColumns[destColumnIndex]!.id }
+              movedItem.parent = { id: destColumn.id }
             }
           }
         }
 
-        setTimeout(() => {
-          updateBlocks(newColumns)
-        }, 0)
+        console.log(sourceColumn)
+        console.log(destColumn)
         return newColumns
       })
     }
@@ -119,27 +110,27 @@ export const KanbanBoard = ({ uuid, data }: KanbanBoardProps) => {
   }
 
   const updateBlocks = async (columns: BlockEntity[]) => {
-    const blk = await logseq.Editor.getBlock(uuid, { includeChildren: true })
-    if (!blk) return
-    blk.children?.forEach((blk) => {
-      if ('children' in blk && blk.children) {
-        blk.children.forEach(async (child) => {
-          await logseq.Editor.removeBlock((child as BlockEntity).uuid)
-        })
-      }
-      //await logseq.Editor.insertBlock(blk.uuid, )
-    })
+    //const blk = await logseq.Editor.getBlock(uuid, { includeChildren: true })
+    //if (!blk) return
+    //blk.children?.forEach((blk) => {
+    //  if ('children' in blk && blk.children) {
+    //    blk.children.forEach(async (child) => {
+    //      await logseq.Editor.removeBlock((child as BlockEntity).uuid)
+    //    })
+    //  }
+    //})
     // TODO: For some reason, references are lost despite blocks retaining their UUID
     // TODO: Maybe can try to insert just the child blocks
-
-    await logseq.Editor.insertBatchBlock(
-      uuid,
-      columns as unknown as IBatchBlock[],
-      {
-        sibling: false,
-        keepUUID: true,
-      },
-    )
+    // TODO: Worse case scenario is to just indicate this as a limitation
+    //
+    //await logseq.Editor.insertBatchBlock(
+    //  uuid,
+    //  columns as unknown as IBatchBlock[],
+    //  {
+    //    sibling: false,
+    //    keepUUID: true,
+    //  },
+    //)
   }
 
   const getTaskContent = (uuid: string): string => {
