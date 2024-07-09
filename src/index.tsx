@@ -97,7 +97,7 @@ const main = async () => {
       const el = parent.document.getElementById(kanbanId)
       if (!el || !el.isConnected || !data) return
       const root = createRoot(el)
-      root.render(<KanbanDnd uuid={uuid} data={data as BlockEntity[]} />)
+      root.render(<KanbanDnd data={data as BlockEntity[]} />)
     }, 0)
   })
 

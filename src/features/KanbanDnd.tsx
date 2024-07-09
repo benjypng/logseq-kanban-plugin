@@ -8,7 +8,7 @@ import {
   useSensor,
   useSensors,
 } from '@dnd-kit/core'
-import { BlockEntity, IBatchBlock } from '@logseq/libs/dist/LSPlugin'
+import { BlockEntity } from '@logseq/libs/dist/LSPlugin'
 import React, { useState } from 'react'
 
 import { Column } from '../components/Column'
@@ -27,110 +27,92 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ data }) => {
     setActiveId(event.active.id as string)
   }
 
-  const handleDragEnd = (event: DragEndEvent) => {
+  const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event
 
     if (active.id !== over?.id) {
-      setColumns((prevColumns) => {
-        const newColumns = JSON.parse(
-          JSON.stringify(prevColumns),
-        ) as BlockEntity[]
-
-        let sourceColumn: BlockEntity | undefined,
-          destColumn: BlockEntity | undefined,
-          sourceItemIndex: number | undefined,
-          destItemIndex: number | undefined
-
-        // Find source column and item index
-        sourceColumn = newColumns.find((column) =>
-          column.children?.some(
-            (item) =>
-              (typeof item === 'object' && 'uuid' in item
-                ? item.uuid
-                : item[1]) === active.id,
-          ),
-        )
-        if (sourceColumn) {
-          sourceItemIndex = sourceColumn.children?.findIndex(
-            (item) =>
-              (typeof item === 'object' && 'uuid' in item
-                ? item.uuid
-                : item[1]) === active.id,
-          )
-        }
-
-        // Find destination column
-        destColumn = newColumns.find((column) => column.uuid === over?.id)
-        if (!destColumn) {
-          destColumn = newColumns.find((column) =>
-            column.children?.some(
+      try {
+        const findColumnAndIndex = (
+          id: string,
+        ): [BlockEntity | undefined, number | undefined] => {
+          for (const column of columns) {
+            if (column.uuid === id) return [column, -1]
+            const index = column.children?.findIndex(
               (item) =>
                 (typeof item === 'object' && 'uuid' in item
                   ? item.uuid
-                  : item[1]) === over?.id,
-            ),
-          )
-          if (destColumn) {
-            destItemIndex = destColumn.children?.findIndex(
-              (item) =>
-                (typeof item === 'object' && 'uuid' in item
-                  ? item.uuid
-                  : item[1]) === over?.id,
+                  : item[1]) === id,
             )
+            if (index !== -1 && index !== undefined) {
+              return [column, index]
+            }
           }
+          return [undefined, undefined]
         }
+
+        const [sourceColumn, sourceItemIndex] = findColumnAndIndex(
+          active.id as string,
+        )
+        const [destColumn, destItemIndex] = findColumnAndIndex(
+          over?.id as string,
+        )
 
         if (sourceColumn && destColumn && sourceItemIndex !== undefined) {
-          // Move the item
-          const [movedItem] =
-            sourceColumn.children?.splice(sourceItemIndex, 1) || []
+          const sourceItem = sourceColumn.children?.[sourceItemIndex]
+          const sourceUUID =
+            typeof sourceItem === 'object' && 'uuid' in sourceItem
+              ? sourceItem.uuid
+              : sourceItem?.[1]
 
-          if (movedItem) {
-            if (destItemIndex !== undefined) {
-              // Insert before the item it was dropped on
-              destColumn.children?.splice(destItemIndex, 0, movedItem)
-            } else {
-              // If dropped directly on a column, add to the end
-              destColumn.children?.push(movedItem)
-            }
+          let targetUUID: string
+          let moveParams: { before: boolean; children: boolean }
 
-            // Update the parent of the moved item
-            if (typeof movedItem === 'object' && 'parent' in movedItem) {
-              movedItem.parent = { id: destColumn.id }
+          if (destItemIndex === -1) {
+            // Move card to empty column or top of column
+            targetUUID = destColumn.uuid
+            moveParams = { before: false, children: true }
+          } else if (destItemIndex === 0) {
+            // Move card to first item in non-empty column
+            const firstItem = destColumn.children?.[0]
+            if (!firstItem) return
+            targetUUID =
+              typeof firstItem === 'object' && 'uuid' in firstItem
+                ? firstItem.uuid
+                : firstItem[1]
+            moveParams = { before: true, children: true }
+          } else {
+            // Move card to specific position in a column
+            if (!destItemIndex) return
+            const targetItem = destColumn.children?.[destItemIndex]
+            if (!targetItem) return
+            targetUUID =
+              typeof targetItem === 'object' && 'uuid' in targetItem
+                ? targetItem.uuid
+                : targetItem[1]
+            moveParams = { before: false, children: false }
+          }
+
+          if (sourceUUID && targetUUID) {
+            await logseq.Editor.moveBlock(sourceUUID, targetUUID, moveParams)
+
+            const [movedItem] =
+              sourceColumn.children?.splice(sourceItemIndex, 1) || []
+            if (movedItem) {
+              if (destItemIndex === -1) {
+                destColumn.children = destColumn.children || []
+                destColumn.children.unshift(movedItem)
+              } else {
+                destColumn.children?.splice(destItemIndex, 0, movedItem)
+              }
             }
+            setColumns(columns)
           }
         }
-
-        console.log(sourceColumn)
-        console.log(destColumn)
-        return newColumns
-      })
+      } catch (error) {
+        console.error('Error moving block:', error)
+      }
     }
     setActiveId(null)
-  }
-
-  const updateBlocks = async (columns: BlockEntity[]) => {
-    //const blk = await logseq.Editor.getBlock(uuid, { includeChildren: true })
-    //if (!blk) return
-    //blk.children?.forEach((blk) => {
-    //  if ('children' in blk && blk.children) {
-    //    blk.children.forEach(async (child) => {
-    //      await logseq.Editor.removeBlock((child as BlockEntity).uuid)
-    //    })
-    //  }
-    //})
-    // TODO: For some reason, references are lost despite blocks retaining their UUID
-    // TODO: Maybe can try to insert just the child blocks
-    // TODO: Worse case scenario is to just indicate this as a limitation
-    //
-    //await logseq.Editor.insertBatchBlock(
-    //  uuid,
-    //  columns as unknown as IBatchBlock[],
-    //  {
-    //    sibling: false,
-    //    keepUUID: true,
-    //  },
-    //)
   }
 
   const getTaskContent = (uuid: string): string => {
@@ -176,15 +158,13 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ data }) => {
 }
 
 interface KanbanDndProps {
-  uuid: string
   data: BlockEntity[]
 }
 
-const KanbanDnd: React.FC<KanbanDndProps> = ({ uuid, data }) => {
+const KanbanDnd: React.FC<KanbanDndProps> = ({ data }) => {
   return (
     <div className="app">
-      <h1>Kanban Board</h1>
-      <KanbanBoard uuid={uuid} data={data} />
+      <KanbanBoard data={data} />
     </div>
   )
 }
