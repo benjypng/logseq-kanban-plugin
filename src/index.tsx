@@ -4,6 +4,7 @@ import { BlockEntity } from '@logseq/libs/dist/LSPlugin.user'
 import { createRoot } from 'react-dom/client'
 import { renderToString } from 'react-dom/server'
 
+import dndCss from './features/dnd.css?raw'
 import { Kanban } from './features/Kanban'
 import KanbanDnd from './features/KanbanDnd'
 import { createNormalBoard } from './helpers/create-normal-board'
@@ -16,6 +17,9 @@ import { Column, ParamsProps } from './types'
 
 const main = async () => {
   console.log('Kanban plugin loaded')
+
+  // Set up style for KanbanDND
+  logseq.provideStyle(dndCss)
 
   // Insert renderer upon slash command
   logseq.Editor.registerSlashCommand('Kanban', async (e) => {
@@ -42,51 +46,6 @@ const main = async () => {
       template: `<div id="${kanbanId}"></div>`,
     })
 
-    logseq.provideStyle(`
-.kanban-board {
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-}
-
-.column {
-  min-height: 100px;
-  padding: 10px;
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  margin: 0 10px;
-}
-
-.column h2 {
-  text-align: center;
-  color: #5e6c84;
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 20px;
-}
-
-.task {
-  background-color: white;
-  border-radius: 5px;
-  padding: 15px;
-  margin-bottom: 15px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  cursor: move;
-  transition: background-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.task:hover {
-  background-color: #f4f5f7;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-}
-
-.task.dragging {
-  background-color: #e2e4e9;
-  box-shadow: 0 5px 10px rgba(0,0,0,0.15);
-  cursor: grabbing;
-}
-`)
     const rootBlk = await logseq.Editor.getBlock(uuid, {
       includeChildren: true,
     })
