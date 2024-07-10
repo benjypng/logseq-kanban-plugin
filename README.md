@@ -2,7 +2,7 @@
 
 # New
 
-Use `/Kanban (DND)` if you want to create a Kanban board with drag and drop functionality. I am still considering merging the functions below but am concerned about breaking people's graphs.
+Use `/Kanban (DND)` if you want to create a Kanban board with drag and drop functionality. When you drag and drop, the blocks are automatically updated. I am still considering merging the functions below but am concerned about breaking people's graphs.
 
 ![](/screenshots/dnd.gif)
 
