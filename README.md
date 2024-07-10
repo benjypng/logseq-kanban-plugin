@@ -1,5 +1,11 @@
 [:gift_heart: Sponsor this project on Github](https://github.com/sponsors/hkgnp) or [:coffee: Get me a coffee](https://www.buymeacoffee.com/hkgnp.dev) if you like this plugin!
 
+# New
+
+Use `/Kanban (DND)` if you want to create a Kanban board with drag and drop functionality. I am still considering merging the functions below but am concerned about breaking people's graphs.
+
+![](/screenshots/dnd.gif)
+
 # Overview
 
 Draw kanban board based on your blocks. Type `/Kanban` to start. Images, linkes, block references, etc. are supported. There are 3 ways to do so:
