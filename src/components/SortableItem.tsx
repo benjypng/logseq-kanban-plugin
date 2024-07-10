@@ -15,6 +15,13 @@ export const SortableItem: React.FC<SortableItemProps> = ({ id, children }) => {
     transition,
   }
 
+  // Handle clicks on links instead of starting drag
+  const handleClick = (e: React.MouseEvent) => {
+    if (e.target instanceof HTMLAnchorElement) {
+      e.stopPropagation()
+    }
+  }
+
   return (
     <div
       ref={setNodeRef}
@@ -22,9 +29,9 @@ export const SortableItem: React.FC<SortableItemProps> = ({ id, children }) => {
       {...attributes}
       {...listeners}
       className="task"
+      onClick={handleClick}
     >
       {children}
     </div>
   )
 }
-

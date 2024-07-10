@@ -21,7 +21,14 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ data }) => {
   const [columns, setColumns] = useState<BlockEntity[]>(data)
   const [activeId, setActiveId] = useState<string | null>(null)
 
-  const sensors = useSensors(useSensor(PointerSensor))
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        delay: 250,
+        tolerance: 5,
+      },
+    }),
+  )
 
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(event.active.id as string)
