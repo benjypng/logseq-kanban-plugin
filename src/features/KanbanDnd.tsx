@@ -24,7 +24,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ data }) => {
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        delay: 250,
+        delay: 100,
         tolerance: 5,
       },
     }),
@@ -151,7 +151,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ data }) => {
             key={column.uuid}
             id={column.uuid}
             title={column.content || ''}
-            tasks={column.children || []}
+            tasks={(column.children as BlockEntity[]) || []}
           />
         ))}
         <DragOverlay>

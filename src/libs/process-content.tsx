@@ -8,6 +8,7 @@ import { handleLink } from './process-content/handle-link'
 import { handlePageReference } from './process-content/handle-page-reference'
 import { handleTag } from './process-content/handle-tag'
 import { removeMarkers } from './process-content/remove-markers'
+import { handleMarkdownLink } from './process-content/handle-markdown-link'
 
 export const processContent = async (
   content: string,
@@ -31,6 +32,9 @@ export const processContent = async (
 
   // Check for image
   str = handleImage(str, path)
+
+  // Check for markdown link
+  str = handleMarkdownLink(str)
 
   // Check for link
   str = handleLink(str)
