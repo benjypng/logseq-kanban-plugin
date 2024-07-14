@@ -51,6 +51,7 @@ const main = async () => {
     })
     if (!rootBlk) return
     const { children: data } = rootBlk
+    if (!data) return
 
     setTimeout(() => {
       const el = parent.document.getElementById(kanbanId)

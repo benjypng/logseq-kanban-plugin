@@ -21,7 +21,14 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ data }) => {
   const [columns, setColumns] = useState<BlockEntity[]>(data)
   const [activeId, setActiveId] = useState<string | null>(null)
 
-  const sensors = useSensors(useSensor(PointerSensor))
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        delay: 100,
+        tolerance: 5,
+      },
+    }),
+  )
 
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(event.active.id as string)
@@ -144,7 +151,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ data }) => {
             key={column.uuid}
             id={column.uuid}
             title={column.content || ''}
-            tasks={column.children || []}
+            tasks={(column.children as BlockEntity[]) || []}
           />
         ))}
         <DragOverlay>

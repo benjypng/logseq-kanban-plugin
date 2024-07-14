@@ -1,6 +1,6 @@
 {
   "name": "logseq-kanban-plugin",
-  "author": "hkgnp",
+  "author": "benjypng",
   "description": "Simple plugin to help visualise data on a Kanban Board.",
   "license": "MIT",
   "logseq": {
