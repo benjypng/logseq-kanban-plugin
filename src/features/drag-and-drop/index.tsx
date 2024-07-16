@@ -11,7 +11,7 @@ import {
 import { BlockEntity } from '@logseq/libs/dist/LSPlugin'
 import React, { useState } from 'react'
 
-import { Column } from '../components/Column'
+import { Column } from '../../components/Column'
 
 interface KanbanBoardProps {
   data: BlockEntity[]
@@ -139,7 +139,14 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ data }) => {
   }
 
   return (
-    <div className="kanban-board">
+    <div
+      className="kanban-board"
+      style={{
+        overflowY: 'auto',
+        height: '100%', // Or any other value that fits your layout
+        maxHeight: '100vh', // Adjust as needed
+      }}
+    >
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}
@@ -168,12 +175,10 @@ interface KanbanDndProps {
   data: BlockEntity[]
 }
 
-const KanbanDnd: React.FC<KanbanDndProps> = ({ data }) => {
+export const KanbanDnd: React.FC<KanbanDndProps> = ({ data }) => {
   return (
     <div className="app">
       <KanbanBoard data={data} />
     </div>
   )
 }
-
-export default KanbanDnd

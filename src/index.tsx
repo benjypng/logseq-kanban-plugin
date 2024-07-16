@@ -4,9 +4,7 @@ import { BlockEntity } from '@logseq/libs/dist/LSPlugin.user'
 import { createRoot } from 'react-dom/client'
 import { renderToString } from 'react-dom/server'
 
-import dndCss from './features/dnd.css?raw'
-import { Kanban } from './features/Kanban'
-import KanbanDnd from './features/KanbanDnd'
+import dndCss from './features/drag-and-drop/dnd.css?raw'
 import { createNormalBoard } from './helpers/create-normal-board'
 import { createNormalBoardWithQuery } from './helpers/create-normal-query-board'
 import { createQueryBoard } from './helpers/create-query-board'
@@ -14,6 +12,8 @@ import { createTaskBoard } from './helpers/create-task-board'
 import { checkParams } from './libs/check-params'
 import { handleStyles } from './libs/handle-styles'
 import { Column, ParamsProps } from './types'
+import { Kanban } from './features/kanban'
+import { KanbanDnd } from './features/drag-and-drop'
 
 const main = async () => {
   console.log('Kanban plugin loaded')
