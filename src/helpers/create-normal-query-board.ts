@@ -23,7 +23,9 @@ export const createNormalBoardWithQuery = async (
       if (!queryResults) return board
 
       for (const r of queryResults) {
-        const content = (await processContent(r.content)) as string
+        const content = (await processContent(
+          r.content ?? r.originalName,
+        )) as string
         column.cards.push({
           id: r.uuid,
           description: content,
