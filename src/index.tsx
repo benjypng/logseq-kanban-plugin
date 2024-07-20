@@ -21,7 +21,7 @@ const main = async () => {
   // Set up style for KanbanDND
   logseq.provideStyle(dndCss)
 
-  logseq.Editor.registerBlockContextMenuItem('Print Kanban', async (e) => {
+  logseq.Editor.registerBlockContextMenuItem('Copy Kanban HTML', async (e) => {
     const element =
       parent.document.querySelector(`div[id^="kanbandnd_${e.uuid}"]`) ??
       parent.document.querySelector(`div[id^="kanban_${e.uuid}"]`)
