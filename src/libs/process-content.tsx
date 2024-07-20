@@ -5,10 +5,10 @@ import { handleBold } from './process-content/handle-bold'
 import { handleImage } from './process-content/handle-image'
 import { handleItalics } from './process-content/handle-italics'
 import { handleLink } from './process-content/handle-link'
+import { handleMarkdownLink } from './process-content/handle-markdown-link'
 import { handlePageReference } from './process-content/handle-page-reference'
 import { handleTag } from './process-content/handle-tag'
 import { removeMarkers } from './process-content/remove-markers'
-import { handleMarkdownLink } from './process-content/handle-markdown-link'
 
 export const processContent = async (
   content: string,
@@ -21,8 +21,15 @@ export const processContent = async (
   str = removeMarkers(str)
 
   // Remove logbook
-  if (str.indexOf(':LOGBOOK:') !== -1)
+  if (str.includes(':LOGBOOK:'))
     str = str.substring(0, str.indexOf(':LOGBOOK:'))
+
+  // Remove scheduled and deadline
+  if (str.includes('SCHEDULED:') || str.includes('DEADLINE:'))
+    str = str.replace(
+      /(SCHEDULED|DEADLINE): <\d{4}-\d{2}-\d{2} \w{3} \d{2}:\d{2}>/g,
+      '',
+    )
 
   // Check for block reference
   str = await handleBlockReference(str, name)
