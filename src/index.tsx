@@ -21,6 +21,28 @@ const main = async () => {
   // Set up style for KanbanDND
   logseq.provideStyle(dndCss)
 
+  logseq.Editor.registerBlockContextMenuItem('Print Kanban', async (e) => {
+    const element =
+      parent.document.querySelector(`div[id^="kanbandnd_${e.uuid}"]`) ??
+      parent.document.querySelector(`div[id^="kanban_${e.uuid}"]`)
+    if (!element) return
+    const stylesheets = [...parent.document.styleSheets]
+    let html = `<html><head>`
+    stylesheets.forEach((stylesheet) => {
+      if (stylesheet.href) {
+        html += `<link rel="stylesheet" href="${stylesheet.href}" />`
+      } else {
+        const rules = [...stylesheet.cssRules]
+          .map((rule) => rule.cssText)
+          .join('\n')
+        html += `<style>${rules}</style>`
+      }
+    })
+    html += `</head><body>${element.outerHTML}</body></html>`
+    parent.navigator.clipboard.writeText(html.replace(/\s+/g, ' ').trim())
+    await logseq.UI.showMsg('Kanban HTML copied to clipboard', 'warning')
+  })
+
   // Insert renderer upon slash command
   logseq.Editor.registerSlashCommand('Kanban', async (e) => {
     await logseq.Editor.insertAtEditingCursor(`{{renderer :kanban_${e.uuid}}}`)
