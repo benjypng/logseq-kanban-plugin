@@ -21,6 +21,7 @@ const main = async () => {
   // Set up style for KanbanDND
   logseq.provideStyle(dndCss)
 
+  // Add copy board html to clipboard feature
   logseq.Editor.registerBlockContextMenuItem('Copy Kanban HTML', async (e) => {
     const element =
       parent.document.querySelector(`div[id^="kanbandnd_${e.uuid}"]`) ??

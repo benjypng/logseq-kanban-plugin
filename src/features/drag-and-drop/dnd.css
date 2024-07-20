@@ -5,6 +5,20 @@
   align-items: flex-start;
 }
 
+.kanban-tag {
+  display: inline-block;
+  padding: 0px 10px;
+  background-color: #4CAF50;
+  color: #FFFFFF;
+  border-radius: 4px;
+  font-size: 0.8rem;
+}
+
+.kanban-tag::before {
+  content: "#"; /* Clock face emoji */
+  margin-right: 2px;
+}
+
 .kanban-board .column {
   background-color: #ebecf0;
   border-radius: 3px;

@@ -34,6 +34,9 @@ export const processContent = async (
   // Check for block reference
   str = await handleBlockReference(str, name)
 
+  // Check for tag
+  str = handleTag(str, name)
+
   // Check for page
   str = await handlePageReference(str, name)
 
@@ -45,9 +48,6 @@ export const processContent = async (
 
   // Check for link
   str = handleLink(str)
-
-  // Check for tag
-  str = handleTag(str, name)
 
   // Check for bold
   str = handleBold(str)
