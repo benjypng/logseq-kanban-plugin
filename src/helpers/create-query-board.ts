@@ -33,9 +33,7 @@ export const createQueryBoard = async (
   markers = sortQueryMarkers(markers, order)
   board = markers.map((m) => ({ id: m, title: m, cards: [] }))
 
-  queryResults = queryResults.sort((a, b) =>
-    a.priority.localeCompare(b.priority),
-  )
+  queryResults = queryResults.sort((a, b) => a.priority - b.priority)
 
   for (const r of queryResults) {
     const content = (await processContent(r.content)) as string

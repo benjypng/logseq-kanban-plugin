@@ -7,7 +7,14 @@ export const handleTag = (
 ): ReactNode[] | string => {
   const rxTagRef = /#(?:\[\[)?(\w+(?:\s+\w+)*)(?:\]\])?/g
   return reactStringReplace(str, rxTagRef, (match, i) => {
-    if (match !== '#')
+    if (match === '#') return str
+    if (match === 'A' || match === 'B' || match === 'C') {
+      return (
+        <a key={match + i} href={`logseq://graph/${name}?page=${match}`}>
+          {match}
+        </a>
+      )
+    } else {
       return (
         <div key={match + i}>
           <a
@@ -18,5 +25,6 @@ export const handleTag = (
           </a>
         </div>
       )
+    }
   })
 }
