@@ -32,6 +32,19 @@ export const Column: React.FC<ColumnProps> = ({ id, title, tasks }) => {
     parseTasks()
   }, [tasks])
 
+  // const addCard = () => {
+  //   // Column uuid: id
+  //   // Append block to uuid
+  // }
+  //
+  // const removeCard = () => {
+  //   // Remove block
+  // }
+  //
+  // const editCard = () => {
+  //   // Update block content
+  // }
+
   return (
     <div ref={setNodeRef} className="column" data-column-id={id}>
       <h2>{title}</h2>

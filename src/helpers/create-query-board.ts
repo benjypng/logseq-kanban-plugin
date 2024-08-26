@@ -31,7 +31,7 @@ export const createQueryBoard = async (
   let markers = [...new Set(queryResults.map((c: BlockEntity) => c.marker))]
   const order = markerOrder
   markers = sortQueryMarkers(markers, order)
-  board = markers.map((m) => ({ id: m, title: m, cards: [] }))
+  const _x = markers.map((m) => ({ id: m, title: m, cards: [] }))
 
   queryResults = queryResults.sort((a, b) => a.priority - b.priority)
 
