@@ -9,17 +9,68 @@ import {
   useSensors,
 } from '@dnd-kit/core'
 import { BlockEntity } from '@logseq/libs/dist/LSPlugin'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { Column } from '../../components/Column'
+import { processContent } from '../../libs/process-content'
 
 interface KanbanBoardProps {
   data: BlockEntity[]
+  queryTasks?: boolean
 }
 
-export const KanbanBoard: React.FC<KanbanBoardProps> = ({ data }) => {
+const replaceTaskMarker = (content: string, marker: string) => {
+  const taskMarker =
+    /^(NOW|LATER|DOING|DONE|CANCELLED|CANCELED|IN-PROGRESS|TODO|WAITING|WAIT)\b/
+
+  if (taskMarker.test(content)) return content.replace(taskMarker, marker)
+  return `${marker} ${content}`
+}
+
+const isBlockEntity = (
+  value: BlockEntity | unknown[] | undefined,
+): value is BlockEntity =>
+  Boolean(value && typeof value === 'object' && !Array.isArray(value))
+
+const getChildUuid = (item: BlockEntity | unknown[]) =>
+  typeof item === 'object' && !Array.isArray(item) && 'uuid' in item
+    ? item.uuid
+    : item[1]
+
+const moveTaskBetweenColumns = (
+  columns: BlockEntity[],
+  sourceColumn: BlockEntity,
+  destColumn: BlockEntity,
+  sourceItemIndex: number,
+  destItemIndex: number,
+  updatedItem?: BlockEntity,
+) => {
+  const movedItem = updatedItem ?? sourceColumn.children?.[sourceItemIndex]
+  if (!movedItem) return columns
+  const movedItemUuid = getChildUuid(movedItem)
+
+  return columns.map((column) => {
+    const children = [...(column.children ?? [])].filter(
+      (item) => getChildUuid(item) !== movedItemUuid,
+    )
+
+    if (column.uuid !== destColumn.uuid) {
+      return { ...column, children }
+    }
+
+    const insertIndex = destItemIndex === -1 ? 0 : destItemIndex
+    children.splice(insertIndex, 0, movedItem)
+    return { ...column, children: children as BlockEntity[] }
+  }) as BlockEntity[]
+}
+
+export const KanbanBoard: React.FC<KanbanBoardProps> = ({
+  data,
+  queryTasks,
+}) => {
   const [columns, setColumns] = useState<BlockEntity[]>(data)
   const [activeId, setActiveId] = useState<string | null>(null)
+  const [activeContent, setActiveContent] = useState<React.ReactNode>(null)
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -70,6 +121,37 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ data }) => {
             typeof sourceItem === 'object' && 'uuid' in sourceItem
               ? sourceItem.uuid
               : sourceItem?.[1]
+
+          if (queryTasks) {
+            if (
+              !sourceUUID ||
+              !isBlockEntity(sourceItem) ||
+              destItemIndex === undefined
+            ) {
+              return
+            }
+
+            const newContent = replaceTaskMarker(
+              sourceItem.content ?? '',
+              destColumn.content ?? '',
+            )
+            await logseq.Editor.updateBlock(sourceUUID, newContent)
+            setColumns(
+              moveTaskBetweenColumns(
+                columns,
+                sourceColumn,
+                destColumn,
+                sourceItemIndex,
+                destItemIndex,
+                {
+                  ...sourceItem,
+                  content: newContent,
+                  marker: destColumn.content,
+                },
+              ),
+            )
+            return
+          }
 
           let targetUUID: string
           let moveParams: { before: boolean; children: boolean }
@@ -138,6 +220,19 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ data }) => {
     return ''
   }
 
+  useEffect(() => {
+    const parseActiveContent = async () => {
+      if (!activeId) {
+        setActiveContent(null)
+        return
+      }
+
+      setActiveContent(await processContent(getTaskContent(activeId)))
+    }
+
+    parseActiveContent()
+  }, [activeId, columns])
+
   return (
     <div
       className="kanban-board"
@@ -163,7 +258,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ data }) => {
         ))}
         <DragOverlay>
           {activeId ? (
-            <div className="task dragging">{getTaskContent(activeId)}</div>
+            <div className="task dragging">{activeContent}</div>
           ) : null}
         </DragOverlay>
       </DndContext>
@@ -173,12 +268,13 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ data }) => {
 
 interface KanbanDndProps {
   data: BlockEntity[]
+  queryTasks?: boolean
 }
 
-export const KanbanDnd: React.FC<KanbanDndProps> = ({ data }) => {
+export const KanbanDnd: React.FC<KanbanDndProps> = ({ data, queryTasks }) => {
   return (
     <div className="app">
-      <KanbanBoard data={data} />
+      <KanbanBoard data={data} queryTasks={queryTasks} />
     </div>
   )
 }

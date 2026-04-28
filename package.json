@@ -14,6 +14,7 @@
     "dev:tailwind": "pnpm add tailwindcss cssnano autoprefixer -D && touch tailwind.config.js && touch .postcssrc.cjs && touch src/tailwind.css",
     "dev": "npx vite",
     "build": "npx tsc && npx vite build",
+    "test": "vitest run --config vitest.config.ts",
     "preview": "npx vite preview"
   },
   "release": {
@@ -63,6 +64,7 @@
     "typescript-eslint": "^7.15.0",
     "vite": "^4.5.3",
     "vite-plugin-logseq": "^1.1.2",
-    "vite-tsconfig-paths": "^4.3.2"
+    "vite-tsconfig-paths": "^4.3.2",
+    "vitest": "^1.6.0"
   }
 }

@@ -11,7 +11,7 @@ export const createTaskBoard = async (
 ) => {
   board = [
     { id: workflow_one, title: workflow_one, cards: [] },
-    { id: workflow_one, title: workflow_two, cards: [] },
+    { id: workflow_two, title: workflow_two, cards: [] },
     { id: "DONE", title: "DONE", cards: [] },
   ];
   for (const c of children) {
