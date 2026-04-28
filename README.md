@@ -77,7 +77,3 @@ You can adjust the widths of the board or cards using the parameters:
 - Column 3
 - The lazy dog
 ```
-
-# Credits
-
-[react-kanban by asseinfo](https://github.com/asseinfo/react-kanban)
