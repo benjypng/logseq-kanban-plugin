@@ -10,8 +10,10 @@ import { Kanban } from './features/kanban'
 import { createNormalBoard } from './helpers/create-normal-board'
 import { createNormalBoardWithQuery } from './helpers/create-normal-query-board'
 import { createQueryBoard } from './helpers/create-query-board'
+import { createQueryTaskColumns } from './helpers/create-query-task-columns'
 import { createTaskBoard } from './helpers/create-task-board'
 import { checkParams } from './libs/check-params'
+import { extractQueryTaskMarkers } from './libs/extract-query-task-markers'
 import { handleStyles } from './libs/handle-styles'
 import { Column, ParamsProps } from './types'
 
@@ -76,11 +78,34 @@ const main = async () => {
     const { children: data } = rootBlk
     if (!data) return
 
+    const paramsBlk = data[0] as BlockEntity | undefined
+    const params = paramsBlk?.content ? checkParams(paramsBlk.content) : {}
+    let queryTasks = false
+    let boardData = data as BlockEntity[]
+
+    if (params.data_type === 'query-tasks') {
+      const queryContent = (paramsBlk?.children as BlockEntity[] | undefined)?.[0]
+        ?.content
+      const queryString = queryContent
+        ? /\{\{query (.*?)\}\}/.exec(queryContent)
+        : undefined
+      if (!queryString || !queryString[1]) return
+
+      const queryResults = await logseq.DB.q(queryString[1])
+      if (!queryResults) return
+
+      boardData = createQueryTaskColumns(
+        queryResults,
+        extractQueryTaskMarkers(queryString[1]),
+      )
+      queryTasks = true
+    }
+
     setTimeout(() => {
       const el = parent.document.getElementById(kanbanId)
-      if (!el || !el.isConnected || !data) return
+      if (!el || !el.isConnected || !boardData) return
       const root = createRoot(el)
-      root.render(<KanbanDnd data={data as BlockEntity[]} />)
+      root.render(<KanbanDnd data={boardData} queryTasks={queryTasks} />)
     }, 0)
   })
 
