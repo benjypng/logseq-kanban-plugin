@@ -1,10 +1,12 @@
 import {
   closestCenter,
+  CollisionDetection,
   DndContext,
   DragEndEvent,
   DragOverlay,
   DragStartEvent,
   PointerSensor,
+  pointerWithin,
   useSensor,
   useSensors,
 } from '@dnd-kit/core'
@@ -24,102 +26,89 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ data }) => {
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        delay: 100,
-        tolerance: 5,
+        distance: 4,
       },
     }),
   )
+
+  const collisionDetection: CollisionDetection = (args) => {
+    if (!args.pointerCoordinates) return closestCenter(args)
+
+    const collisions = pointerWithin({
+      ...args,
+      droppableContainers: args.droppableContainers.filter(
+        (container) => container.id !== args.active.id,
+      ),
+    })
+    // Cards and their containing column overlap. Prefer the card so that
+    // dropping over it preserves the intended position within the column.
+    const card = collisions.find(
+      (collision) => !columns.some((column) => column.uuid === collision.id),
+    )
+    return card ? [card] : collisions.slice(0, 1)
+  }
 
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(event.active.id as string)
   }
 
   const handleDragEnd = async (event: DragEndEvent) => {
-    const { active, over } = event
+    try {
+      const { active, over } = event
+      if (!over || active.id === over.id) return
 
-    if (active.id !== over?.id) {
-      try {
-        const findColumnAndIndex = (
-          id: string,
-        ): [BlockEntity | undefined, number | undefined] => {
-          for (const column of columns) {
-            if (column.uuid === id) return [column, -1]
-            const index = column.children?.findIndex(
-              (item) =>
-                (typeof item === 'object' && 'uuid' in item
-                  ? item.uuid
-                  : item[1]) === id,
-            )
-            if (index !== -1 && index !== undefined) {
-              return [column, index]
-            }
-          }
-          return [undefined, undefined]
-        }
-
-        const [sourceColumn, sourceItemIndex] = findColumnAndIndex(
-          active.id as string,
+      const containsCard = (column: BlockEntity, id: string | number) =>
+        column.children?.some(
+          (item) =>
+            (typeof item === 'object' && 'uuid' in item
+              ? item.uuid
+              : item[1]) === id,
         )
-        const [destColumn, destItemIndex] = findColumnAndIndex(
-          over?.id as string,
-        )
+      const sourceColumn = columns.find((column) =>
+        containsCard(column, active.id),
+      )
+      const destColumn = columns.find(
+        (column) => column.uuid === over.id || containsCard(column, over.id),
+      )
+      if (!sourceColumn || !destColumn) return
 
-        if (sourceColumn && destColumn && sourceItemIndex !== undefined) {
-          const sourceItem = sourceColumn.children?.[sourceItemIndex]
-          const sourceUUID =
-            typeof sourceItem === 'object' && 'uuid' in sourceItem
-              ? sourceItem.uuid
-              : sourceItem?.[1]
-
-          let targetUUID: string
-          let moveParams: { before: boolean; children: boolean }
-
-          if (destItemIndex === -1) {
-            // Move card to empty column or top of column
-            targetUUID = destColumn.uuid
-            moveParams = { before: false, children: true }
-          } else if (destItemIndex === 0) {
-            // Move card to first item in non-empty column
-            const firstItem = destColumn.children?.[0]
-            if (!firstItem) return
-            targetUUID =
-              typeof firstItem === 'object' && 'uuid' in firstItem
-                ? firstItem.uuid
-                : firstItem[1]
-            moveParams = { before: true, children: true }
-          } else {
-            // Move card to specific position in a column
-            if (!destItemIndex) return
-            const targetItem = destColumn.children?.[destItemIndex]
-            if (!targetItem) return
-            targetUUID =
-              typeof targetItem === 'object' && 'uuid' in targetItem
-                ? targetItem.uuid
-                : targetItem[1]
-            moveParams = { before: false, children: false }
-          }
-
-          if (sourceUUID && targetUUID) {
-            await logseq.Editor.moveBlock(sourceUUID, targetUUID, moveParams)
-
-            const [movedItem] =
-              sourceColumn.children?.splice(sourceItemIndex, 1) || []
-            if (movedItem) {
-              if (destItemIndex === -1) {
-                destColumn.children = destColumn.children || []
-                destColumn.children.unshift(movedItem)
-              } else {
-                destColumn.children?.splice(destItemIndex, 0, movedItem)
-              }
-            }
-            setColumns(columns)
-          }
-        }
-      } catch (error) {
-        console.error('Error moving block:', error)
+      const moveParams = { before: false, children: true }
+      if (destColumn.uuid !== over.id) {
+        const draggedRect = active.rect.current.translated
+        moveParams.before =
+          !draggedRect ||
+          draggedRect.top + draggedRect.height / 2 <=
+            over.rect.top + over.rect.height / 2
+        moveParams.children = false
       }
+      await logseq.Editor.moveBlock(
+        active.id as string,
+        over.id as string,
+        moveParams,
+      )
+
+      // Use persisted ordering and new child arrays so Column's parsing effect
+      // runs again. Mutating the existing arrays leaves rendered cards stale.
+      const updatedColumns = await Promise.all(
+        columns.map(async (column) => {
+          const block = await logseq.Editor.getBlock(column.uuid, {
+            includeChildren: true,
+          })
+          if (!block)
+            throw new Error(`Cannot reload Kanban column ${column.uuid}`)
+          return { ...block, children: [...(block.children || [])] }
+        }),
+      )
+      setColumns(updatedColumns)
+    } catch (error) {
+      console.error('Error moving Kanban card:', error)
+      await logseq.UI.showMsg(
+        'Kanban move failed or could not refresh. Reopen the page to check the saved position.',
+        'error',
+      )
+    } finally {
+      setActiveId(null)
     }
-    setActiveId(null)
   }
 
   const getTaskContent = (uuid: string): string => {
@@ -149,9 +138,10 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ data }) => {
     >
       <DndContext
         sensors={sensors}
-        collisionDetection={closestCenter}
+        collisionDetection={collisionDetection}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
+        onDragCancel={() => setActiveId(null)}
       >
         {columns.map((column: BlockEntity) => (
           <Column
